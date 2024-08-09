@@ -34,7 +34,9 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthScreen(modifier: Modifier = Modifier, onSignInClick: () -> Unit = {}) {
+fun AuthScreen(modifier: Modifier = Modifier,
+               onSignInClick: () -> Unit = {},
+               ifNewGoTo: () -> Unit ={}) {
     var login by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var mensagemErro by remember { mutableStateOf<String?>(null) }
@@ -115,7 +117,7 @@ fun AuthScreen(modifier: Modifier = Modifier, onSignInClick: () -> Unit = {}) {
             colors = ButtonDefaults.textButtonColors(
                 contentColor = Color(0xFFC31E41)
             ),
-            onClick = {  }
+            onClick = { ifNewGoTo() }
 
             ) {
             Text(

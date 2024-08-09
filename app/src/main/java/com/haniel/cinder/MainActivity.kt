@@ -79,7 +79,11 @@ class MainActivity : ComponentActivity() {
                     AuthScreen(modifier= modifierScreen.padding(paddingValues),
                         onSignInClick = {
                         navController.navigate("principal_screen")
-                    })
+                    },
+                        ifNewGoTo = {
+                            navController.navigate("register_screen")
+                        }
+                    )
                 }
                 composable("principal_screen"){
                     CinderPrincipalScreen(modifier=modifierScreen.padding(paddingValues))
