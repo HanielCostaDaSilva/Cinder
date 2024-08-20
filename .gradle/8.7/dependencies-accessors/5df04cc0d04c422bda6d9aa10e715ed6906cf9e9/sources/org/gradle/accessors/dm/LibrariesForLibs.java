@@ -23,6 +23,7 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     private final AbstractExternalDependencyFactory owner = this;
     private final AndroidxLibraryAccessors laccForAndroidxLibraryAccessors = new AndroidxLibraryAccessors(owner);
+    private final FirebaseLibraryAccessors laccForFirebaseLibraryAccessors = new FirebaseLibraryAccessors(owner);
     private final VersionAccessors vaccForVersionAccessors = new VersionAccessors(providers, config);
     private final BundleAccessors baccForBundleAccessors = new BundleAccessors(objects, providers, config, attributesFactory, capabilityNotationParser);
     private final PluginAccessors paccForPluginAccessors = new PluginAccessors(providers, config);
@@ -47,6 +48,13 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
      */
     public AndroidxLibraryAccessors getAndroidx() {
         return laccForAndroidxLibraryAccessors;
+    }
+
+    /**
+     * Group of libraries at <b>firebase</b>
+     */
+    public FirebaseLibraryAccessors getFirebase() {
+        return laccForFirebaseLibraryAccessors;
     }
 
     /**
@@ -76,6 +84,7 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
         private final AndroidxCoreLibraryAccessors laccForAndroidxCoreLibraryAccessors = new AndroidxCoreLibraryAccessors(owner);
         private final AndroidxEspressoLibraryAccessors laccForAndroidxEspressoLibraryAccessors = new AndroidxEspressoLibraryAccessors(owner);
         private final AndroidxLifecycleLibraryAccessors laccForAndroidxLifecycleLibraryAccessors = new AndroidxLifecycleLibraryAccessors(owner);
+        private final AndroidxNavigationLibraryAccessors laccForAndroidxNavigationLibraryAccessors = new AndroidxNavigationLibraryAccessors(owner);
         private final AndroidxUiLibraryAccessors laccForAndroidxUiLibraryAccessors = new AndroidxUiLibraryAccessors(owner);
 
         public AndroidxLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
@@ -133,6 +142,13 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
          */
         public AndroidxLifecycleLibraryAccessors getLifecycle() {
             return laccForAndroidxLifecycleLibraryAccessors;
+        }
+
+        /**
+         * Group of libraries at <b>androidx.navigation</b>
+         */
+        public AndroidxNavigationLibraryAccessors getNavigation() {
+            return laccForAndroidxNavigationLibraryAccessors;
         }
 
         /**
@@ -238,6 +254,22 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     }
 
+    public static class AndroidxNavigationLibraryAccessors extends SubDependencyFactory {
+
+        public AndroidxNavigationLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>compose</b> with <b>androidx.navigation:navigation-compose</b> coordinates and
+         * with version reference <b>navigationCompose</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getCompose() {
+            return create("androidx.navigation.compose");
+        }
+
+    }
+
     public static class AndroidxUiLibraryAccessors extends SubDependencyFactory implements DependencyNotationSupplier {
         private final AndroidxUiTestLibraryAccessors laccForAndroidxUiTestLibraryAccessors = new AndroidxUiTestLibraryAccessors(owner);
         private final AndroidxUiToolingLibraryAccessors laccForAndroidxUiToolingLibraryAccessors = new AndroidxUiToolingLibraryAccessors(owner);
@@ -332,6 +364,22 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
 
     }
 
+    public static class FirebaseLibraryAccessors extends SubDependencyFactory {
+
+        public FirebaseLibraryAccessors(AbstractExternalDependencyFactory owner) { super(owner); }
+
+        /**
+         * Dependency provider for <b>bom</b> with <b>com.google.firebase:firebase-bom</b> coordinates and
+         * with version reference <b>firebaseBom</b>
+         * <p>
+         * This dependency was declared in catalog libs.versions.toml
+         */
+        public Provider<MinimalExternalModuleDependency> getBom() {
+            return create("firebase.bom");
+        }
+
+    }
+
     public static class VersionAccessors extends VersionFactory  {
 
         public VersionAccessors(ProviderFactory providers, DefaultVersionCatalog config) { super(providers, config); }
@@ -387,6 +435,16 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
         public Provider<String> getEspressoCore() { return getVersion("espressoCore"); }
 
         /**
+         * Version alias <b>firebaseBom</b> with value <b>33.1.2</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getFirebaseBom() { return getVersion("firebaseBom"); }
+
+        /**
          * Version alias <b>junit</b> with value <b>4.13.2</b>
          * <p>
          * If the version is a rich version and cannot be represented as a
@@ -425,6 +483,16 @@ public class LibrariesForLibs extends AbstractExternalDependencyFactory {
          * This version was declared in catalog libs.versions.toml
          */
         public Provider<String> getLifecycleRuntimeKtx() { return getVersion("lifecycleRuntimeKtx"); }
+
+        /**
+         * Version alias <b>navigationCompose</b> with value <b>2.7.7</b>
+         * <p>
+         * If the version is a rich version and cannot be represented as a
+         * single version string, an empty string is returned.
+         * <p>
+         * This version was declared in catalog libs.versions.toml
+         */
+        public Provider<String> getNavigationCompose() { return getVersion("navigationCompose"); }
 
     }
 

@@ -1,6 +1,6 @@
 package com.haniel.cinder.model
 
-class Person (
+class User (
     val name:String,
     val age:Int,
     val imageID:Int,

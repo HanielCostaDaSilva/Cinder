@@ -47,14 +47,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.haniel.cinder.model.Person
+import com.haniel.cinder.model.User
 import com.haniel.cinder.model.UserRepository
 
 private val userRepository = UserRepository();
 
 
 @Composable
-fun PersonCard(person: Person) {
+fun PersonCard(user: User) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -73,23 +73,23 @@ fun PersonCard(person: Person) {
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(person.imageID),
-                contentDescription = "${person.name} Image",
+                painter = painterResource(user.imageID),
+                contentDescription = "${user.name} Image",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
                     .clip(RoundedCornerShape(30.dp))
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Name: ${person.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Text("Age: ${person.age}", fontSize = 18.sp)
+            Text("Name: ${user.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Text("Age: ${user.age}", fontSize = 18.sp)
         }
 
     }
 }
 
 @Composable
-fun BiograpyCard(person: Person) {
+fun BiograpyCard(user: User) {
     ElevatedCard(
         modifier = Modifier
             .wrapContentHeight()
@@ -112,7 +112,7 @@ fun BiograpyCard(person: Person) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 modifier = Modifier.fillMaxHeight(),
-                text = person.biograpy,
+                text = user.biograpy,
                 color = Color.Black,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
@@ -122,7 +122,7 @@ fun BiograpyCard(person: Person) {
 }
 
 @Composable
-fun FavoritePersonButton(person: Person, modifier: Modifier) {
+fun FavoritePersonButton(user: User, modifier: Modifier) {
     var favoriteIcon by remember { mutableStateOf(Icons.Filled.FavoriteBorder) }
     val favoriteIconFilled = Icons.Filled.FavoriteBorder
     val favoriteIconBorder = Icons.Filled.Favorite
@@ -136,7 +136,7 @@ fun FavoritePersonButton(person: Person, modifier: Modifier) {
             } else {
                 favoriteIconBorder
             }
-            println("O usuário favoritou: ${person.name}")
+            println("O usuário favoritou: ${user.name}")
         },
         shape = CircleShape,
         containerColor = Color.White,
@@ -189,10 +189,10 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier) {
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            BiograpyCard(person = personDisplay)
+            BiograpyCard(user = personDisplay)
         }
         FavoritePersonButton(
-            person = personDisplay,
+            user = personDisplay,
             Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp)

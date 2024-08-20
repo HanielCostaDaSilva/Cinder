@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "692020621948",
+    "project_id": "cinder-e5f4d",
+    "storage_bucket": "cinder-e5f4d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692020621948:android:9f3bc2531c70e871810ff9",
+        "android_client_info": {
+          "package_name": "com.haniel.cinder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh0svrXDLOETOsnMBN7XaJMlxf2KfZYco"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
