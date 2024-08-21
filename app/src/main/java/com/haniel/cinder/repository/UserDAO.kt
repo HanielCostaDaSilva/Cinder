@@ -3,6 +3,7 @@ package com.haniel.cinder.repository;
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
+import com.haniel.cinder.model.NullUser
 import com.haniel.cinder.model.User
 
 
@@ -20,27 +21,51 @@ class UserDAO {
             }
     }
 
-    fun findByName(name: String, callback: (User?) -> Unit) {
+    fun findByName(name: String, callback: (User) -> Unit) {
         db.collection("users").whereEqualTo("name", name).get()
             .addOnSuccessListener { document ->
                 if (!document.isEmpty) {
                     val user = document.documents[0].toObject<User>()
-                    callback(user)
+                    if (user != null) {
+                        callback(user)
+                    }
+
                 } else {
-                    callback(null)
+                    callback(NullUser())
                 }
             }
             .addOnFailureListener {
-                callback(null)
+                callback(NullUser())
             }
     }
 
     fun findbyId(id: String, callback: (User) -> Unit) {
-        //TODO implemente find por Id
+        db.collection("users").whereEqualTo("id", id).get()
+            .addOnSuccessListener { document ->
+                if (!document.isEmpty) {
+                    val user = document.documents[0].toObject<User>()
+                    if (user != null) {
+                        callback(user)
+                    }
+                } else {
+                    callback(NullUser())
+                }
+            }
+            .addOnFailureListener {
+                callback(NullUser())
+            }
     }
 
 
     fun add(user: User, callback: (User) -> Unit) {
-        //TODO implemente adicionar
+        db.collection("users")
+            .add(user)
+            .addOnSuccessListener { documentReference ->
+                user.id = documentReference.id
+                callback(user)
+            }
+            .addOnFailureListener { e ->
+                callback(NullUser())
+            }
     }
 }

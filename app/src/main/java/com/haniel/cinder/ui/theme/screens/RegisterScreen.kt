@@ -121,7 +121,6 @@ fun RegisterScreen(modifier: Modifier = Modifier,
 
                 } else {
                    onRegister()
-                    goTo()
                 }
             },
             colors = ButtonDefaults.buttonColors(

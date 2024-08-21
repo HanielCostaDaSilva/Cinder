@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.haniel.cinder.model.User
 import com.haniel.cinder.ui.theme.screens.AuthScreen
 import com.haniel.cinder.ui.theme.screens.CinderPrincipalScreen
 import com.haniel.cinder.ui.theme.screens.RegisterScreen
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun App() {
-        val BackColor= Color(0xFFC31E41)
+        val BackColor= Color(0xFFC31E41);
         val contentColor = Color(0xFFE7E7E7)
         Scaffold(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -76,8 +77,10 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             NavHost(navController = navController, startDestination = "auth_screen") {
                 composable("auth_screen"){
+
                     AuthScreen(modifier= modifierScreen.padding(paddingValues),
-                        onSignInClick = {
+                        onSignInClick = {user:User ->
+                            print("Hello ${user.name}")
                         navController.navigate("principal_screen")
                     },
                         ifNewGoTo = {
@@ -91,6 +94,9 @@ class MainActivity : ComponentActivity() {
 
                 composable("register_screen"){
                     RegisterScreen(modifier= modifierScreen.padding(paddingValues),
+                        onRegister = {
+                            navController.navigate("auth_screen")
+                        },
                         goTo = {
                             navController.navigate("principal_screen")
                         })

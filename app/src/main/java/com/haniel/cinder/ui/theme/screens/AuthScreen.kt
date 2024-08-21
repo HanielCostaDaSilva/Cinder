@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,13 +31,25 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.haniel.cinder.model.User
+import com.haniel.cinder.repository.UserDAO
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+val userDao: UserDAO = UserDAO();
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthScreen(modifier: Modifier = Modifier,
-               onSignInClick: () -> Unit = {},
-               ifNewGoTo: () -> Unit ={}) {
+fun AuthScreen(
+    modifier: Modifier = Modifier,
+    onSignInClick: (User) -> Unit = {},
+    ifNewGoTo: () -> Unit = {}
+) {
+
+    var scope = rememberCoroutineScope()
+
     var login by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var mensagemErro by remember { mutableStateOf<String?>(null) }
@@ -92,16 +105,28 @@ fun AuthScreen(modifier: Modifier = Modifier,
             }
         }
         Button(
+
             onClick = {
-                if(login =="" || senha==""){
+                if (login == "" || senha == "") {
                     mensagemErro = "Preencha todos os campos"
+                } else {
+                    scope.launch(Dispatchers.IO) {
+                        userDao.findByName(login, callback = { user: User ->
+                            if (user.isEmpty()) {
+                                mensagemErro = "Usuário não encontrado"
+                            } else {
+                                if (user.password == senha) {
+                                    onSignInClick(user)
+                                } else {
+
+                                mensagemErro = "Senha Inválida, tente: ${user.password}"
+                                }
+                            }
+                        })
+                    }
 
                 }
-                else if (login == senha) {
-                    onSignInClick()
-                } else {
-                    mensagemErro = "Login ou senha inválido"
-                }
+
             },
             colors = ButtonDefaults.buttonColors(
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -112,16 +137,17 @@ fun AuthScreen(modifier: Modifier = Modifier,
             Text("Entrar")
         }
         TextButton(
-            modifier= Modifier
+            modifier = Modifier
                 .fillMaxWidth(),
             colors = ButtonDefaults.textButtonColors(
                 contentColor = Color(0xFFC31E41)
             ),
             onClick = { ifNewGoTo() }
 
-            ) {
+        ) {
             Text(
-                "Novo Por aqui? Registre-se")
+                "Novo Por aqui? Registre-se"
+            )
         }
     }
 }
@@ -129,9 +155,9 @@ fun AuthScreen(modifier: Modifier = Modifier,
 @Preview(showBackground = true)
 @Composable
 fun DefaultAuthPreview() {
-    val modifierScreen:Modifier= Modifier
+    val modifierScreen: Modifier = Modifier
         .fillMaxSize()
         .background(Color(0xFF1A1A1A))
         .padding(16.dp)
-    AuthScreen(modifier = modifierScreen )
+    AuthScreen(modifier = modifierScreen)
 }
