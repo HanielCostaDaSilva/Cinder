@@ -3,7 +3,6 @@ package com.haniel.cinder.repository;
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
-import com.haniel.cinder.model.NullUser
 import com.haniel.cinder.model.User
 
 
@@ -21,7 +20,7 @@ class UserDAO {
             }
     }
 
-    fun findByName(name: String, callback: (User) -> Unit) {
+    fun findByName(name: String, callback: (User?) -> Unit) {
         db.collection("users").whereEqualTo("name", name).get()
             .addOnSuccessListener { document ->
                 if (!document.isEmpty) {
@@ -31,15 +30,15 @@ class UserDAO {
                     }
 
                 } else {
-                    callback(NullUser())
+                    callback(null)
                 }
             }
             .addOnFailureListener {
-                callback(NullUser())
+                callback(null)
             }
     }
 
-    fun findbyId(id: String, callback: (User) -> Unit) {
+    fun findbyId(id: String, callback: (User?) -> Unit) {
         db.collection("users").whereEqualTo("id", id).get()
             .addOnSuccessListener { document ->
                 if (!document.isEmpty) {
@@ -48,16 +47,16 @@ class UserDAO {
                         callback(user)
                     }
                 } else {
-                    callback(NullUser())
+                    callback(null)
                 }
             }
             .addOnFailureListener {
-                callback(NullUser())
+                callback(null)
             }
     }
 
 
-    fun add(user: User, callback: (User) -> Unit) {
+    fun add(user: User, callback: (User?) -> Unit) {
         db.collection("users")
             .add(user)
             .addOnSuccessListener { documentReference ->
@@ -65,7 +64,8 @@ class UserDAO {
                 callback(user)
             }
             .addOnFailureListener { e ->
-                callback(NullUser())
+                callback(null)
             }
     }
+
 }
