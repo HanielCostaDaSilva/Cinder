@@ -7,31 +7,37 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,10 +53,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.haniel.cinder.R
 import com.haniel.cinder.model.User
-import com.haniel.cinder.model.UserRepository
-
-private val userRepository = UserRepository();
+import com.haniel.cinder.repository.UserDAO
 
 
 @Composable
@@ -73,7 +78,7 @@ fun PersonCard(user: User) {
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(user.imageID),
+                painter = painterResource(id = if (user.imageID != 0) user.imageID else R.drawable.cinder),
                 contentDescription = "${user.name} Image",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,7 +106,7 @@ fun BiograpyCard(user: User) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
+                .fillMaxWidth()
         ) {
             Text(
                 "Biography",
@@ -111,9 +116,9 @@ fun BiograpyCard(user: User) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                modifier = Modifier.fillMaxHeight(),
+                modifier = Modifier.fillMaxWidth(),
                 text = user.biograpy,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -147,65 +152,129 @@ fun FavoritePersonButton(user: User, modifier: Modifier) {
     }
 }
 
+val BackColor = Color(0xFF5A028F)
+val contentColor = Color(0xFFE7E7E7)
 
 @Composable
-fun CinderPrincipalScreen(modifier: Modifier = Modifier) {
+@OptIn(ExperimentalMaterial3Api::class)
+fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = UserDAO()) {
     var indexPerson by remember { mutableIntStateOf(0) }
-    val personDisplay by remember { derivedStateOf { userRepository.getPerson(indexPerson) } }
-    Box(
-        modifier = modifier
-    ) {
-        Column(
-        ) {
-            PersonCard(personDisplay)
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Magenta,
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.width(150.dp),
-                    onClick = {
-                        indexPerson = (indexPerson + 1) % userRepository.size()
-                    },
-                ) {
-                    Text("Match")
-                }
-                Button(
-                    modifier = Modifier.width(150.dp),
-                    onClick = {
-                        indexPerson =
-                            if (indexPerson - 1 < 0) userRepository.size() - 1 // Caso Especial: O primeiro item da lista
-                            else (indexPerson - 1) % userRepository.size() // Caso Base
+    var users by remember { mutableStateOf<List<User>>(emptyList()) }
+    var personDisplay by remember { mutableStateOf<User?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
 
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
-                ) {
-                    Text("Next")
-                }
+    LaunchedEffect(Unit) {
+        userDao.find { loadedUsers ->
+            users = loadedUsers
+            if (users.isNotEmpty()) {
+                personDisplay = users[indexPerson]
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            BiograpyCard(user = personDisplay)
+            isLoading = false
         }
-        FavoritePersonButton(
-            user = personDisplay,
-            Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-        )
-
     }
 
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = BackColor,
+                    titleContentColor = contentColor,
+                ),
+                title = { Text("Cinder") },
+                navigationIcon = {
+                    IconButton(onClick = { }) {
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            contentDescription = "Menu",
+                            tint = contentColor
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { }) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = "Account",
+                            tint = contentColor
+                        )
+                    }
+                }
+            )
+        },
+        content = { paddingValues ->
+            Box(modifier = Modifier.padding(paddingValues)) {
+                if (isLoading) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    personDisplay?.let { person ->
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp)
+                        ) {
+                            item {
+                                PersonCard(person)
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+                            item {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Button(
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color.Magenta,
+                                            contentColor = Color.White
+                                        ),
+                                        modifier = Modifier.width(150.dp),
+                                        onClick = {
+                                            indexPerson = (indexPerson + 1) % users.size
+                                            personDisplay = users[indexPerson]
+                                        },
+                                    ) {
+                                        Text("Match")
+                                    }
+                                    Button(
+                                        modifier = Modifier.width(150.dp),
+                                        onClick = {
+                                            indexPerson =
+                                                if (indexPerson - 1 < 0) users.size - 1
+                                                else (indexPerson - 1) % users.size
+                                            personDisplay = users[indexPerson]
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                                    ) {
+                                        Text("Next")
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+                            item {
+                                BiograpyCard(user = person)
+                            }
+                        }
+                        FavoritePersonButton(
+                            user = person,
+                            Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(16.dp)
+                        )
+                    }
+                }
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPrincipalPreview() {
-    val modifierScreen:Modifier= Modifier.fillMaxSize()
+    val modifierScreen: Modifier = Modifier
+        .fillMaxSize()
         .background(Color(0xFF1A1A1A))
         .padding(16.dp)
     CinderPrincipalScreen(modifier = modifierScreen)
