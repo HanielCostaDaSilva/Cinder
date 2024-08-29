@@ -54,6 +54,7 @@ fun RegisterScreen(
 ) {
     var name by remember { mutableStateOf("") }
     var age by remember { mutableStateOf("") }
+    var biography by remember { mutableStateOf("") }
     var login by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var mensagemErro by remember { mutableStateOf<String?>(null) }
@@ -64,7 +65,7 @@ fun RegisterScreen(
         .fillMaxWidth()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.SpaceAround,
         modifier = modifier
             .background(MaterialTheme.colorScheme.background)
     ) {
@@ -73,7 +74,7 @@ fun RegisterScreen(
             painter = imagem,
             contentDescription = null,
             modifier = Modifier
-                .size(150.dp)
+                .size(100.dp)
                 .padding(16.dp)
         )
         Text(
@@ -81,14 +82,14 @@ fun RegisterScreen(
             color = MaterialTheme.colorScheme.onBackground,
             fontSize = 32.sp,
             fontWeight = FontWeight.Normal,
-            modifier = Modifier.padding(bottom = 24.dp)
+            modifier = Modifier.padding(bottom = 16.dp)
         )
         TextField(
             value = name,
             onValueChange = { name = it },
             placeholder = { Text("Nome") },
             colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Red,
+                focusedIndicatorColor = Color.Green,
                 unfocusedIndicatorColor = Color.Gray
             ),
             modifier = Modifier
@@ -102,7 +103,21 @@ fun RegisterScreen(
             },
             placeholder = { Text(" Idade") },
             colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Red,
+                focusedIndicatorColor = Color.Green,
+                unfocusedIndicatorColor = Color.Gray
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp, 10.dp, 30.dp, 10.dp)
+        )
+        TextField(
+            value = biography,
+            onValueChange = {
+                biography = it
+            },
+            placeholder = { Text(" Biografia") },
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Green,
                 unfocusedIndicatorColor = Color.Gray
             ),
             modifier = Modifier
@@ -114,7 +129,20 @@ fun RegisterScreen(
             onValueChange = { login = it },
             placeholder = { Text("Usuario") },
             colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Red,
+                focusedIndicatorColor = Color.Green,
+                unfocusedIndicatorColor = Color.Gray
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp, 10.dp, 30.dp, 10.dp)
+        )
+        TextField(
+            value = senha,
+            onValueChange = { senha = it },
+            placeholder = { Text("Senha") },
+            visualTransformation = PasswordVisualTransformation(),
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Green,
                 unfocusedIndicatorColor = Color.Gray
             ),
             modifier = Modifier
@@ -122,20 +150,6 @@ fun RegisterScreen(
                 .padding(30.dp, 10.dp, 30.dp, 10.dp)
         )
         Spacer(modifier = Modifier.height(10.dp))
-        TextField(
-            value = senha,
-            onValueChange = { senha = it },
-            placeholder = { Text("Senha") },
-            visualTransformation = PasswordVisualTransformation(),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Red,
-                unfocusedIndicatorColor = Color.Gray
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(30.dp, 10.dp, 30.dp, 10.dp)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
 
         mensagemErro?.let {
             Text(
@@ -155,7 +169,7 @@ fun RegisterScreen(
                     mensagemErro = "Alguns campos não foram preenchidos"
                 } else {
                     scope.launch {
-                        val usuario = User(name = login, password = senha)
+                        val usuario = User(name = login, password = senha, age = age.toIntOrNull() ?: 0 , biograpy = biography)
                         userDAO.add(usuario) {
                             onRegister()
                         }
@@ -188,9 +202,10 @@ fun RegisterScreen(
                 fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
-                textDecoration = TextDecoration.Underline
+                textDecoration = TextDecoration.Underline,
             )
         )
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
@@ -198,8 +213,5 @@ fun RegisterScreen(
 @Composable
 fun DefaultRegisterPreview() {
     val modifierScreen: Modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0xFF1A1A1A))
-        .padding(16.dp)
     RegisterScreen(modifier = modifierScreen)
 }

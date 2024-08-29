@@ -18,6 +18,7 @@ import com.haniel.cinder.ui.theme.screens.AuthScreen
 import com.haniel.cinder.ui.theme.screens.CinderPrincipalScreen
 import com.haniel.cinder.ui.theme.screens.FirstLogin
 import com.haniel.cinder.ui.theme.screens.RegisterScreen
+import com.haniel.cinder.ui.theme.screens.profileUserScreen
 
 class   MainActivity : ComponentActivity() {
     private val modifierScreen: Modifier = Modifier
@@ -48,7 +49,10 @@ class   MainActivity : ComponentActivity() {
                 )
             }
             composable("principal_screen") {
-                CinderPrincipalScreen(modifier = modifierScreen)
+                CinderPrincipalScreen(modifier = modifierScreen, onProfile = {navController.navigate("profile_screen") })
+            }
+            composable("profile_screen") {
+               profileUserScreen(modifier = modifierScreen)
             }
 
             composable("register_screen") {

@@ -87,7 +87,7 @@ fun AuthScreen(
             onValueChange = { login = it },
             placeholder = { Text("Usuario") },
             colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Red,
+                focusedIndicatorColor = Color.Green,
                 unfocusedIndicatorColor = Color.Gray
             ),
             modifier = Modifier
@@ -102,7 +102,7 @@ fun AuthScreen(
             placeholder = { Text("Senha") },
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Red,
+                focusedIndicatorColor = Color.Green,
                 unfocusedIndicatorColor = Color.Gray
             ),
             modifier = Modifier
