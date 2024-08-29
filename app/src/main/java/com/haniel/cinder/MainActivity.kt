@@ -19,7 +19,7 @@ import com.haniel.cinder.ui.theme.screens.CinderPrincipalScreen
 import com.haniel.cinder.ui.theme.screens.FirstLogin
 import com.haniel.cinder.ui.theme.screens.RegisterScreen
 
-class MainActivity : ComponentActivity() {
+class   MainActivity : ComponentActivity() {
     private val modifierScreen: Modifier = Modifier
         .fillMaxSize()
         .background(Color(0xFF1A1A1A))
