@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Menu
@@ -86,8 +88,8 @@ fun PersonCard(user: User) {
                     .clip(RoundedCornerShape(30.dp))
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Name: ${user.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Text("Age: ${user.age}", fontSize = 18.sp)
+            Text("Nome: ${user.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Text("Idade: ${user.age}", fontSize = 18.sp)
         }
 
     }
@@ -109,7 +111,7 @@ fun BiograpyCard(user: User) {
                 .fillMaxWidth()
         ) {
             Text(
-                "Biography",
+                "Biografia",
                 fontSize = 29.sp,
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic
@@ -126,21 +128,22 @@ fun BiograpyCard(user: User) {
     }
 }
 
+
 @Composable
 fun FavoritePersonButton(user: User, modifier: Modifier) {
+
     var favoriteIcon by remember { mutableStateOf(Icons.Filled.FavoriteBorder) }
     val favoriteIconFilled = Icons.Filled.FavoriteBorder
     val favoriteIconBorder = Icons.Filled.Favorite
 
     SmallFloatingActionButton(
-        modifier = modifier,
+        modifier = modifier.padding(10.dp),
 
-        onClick = {
-            favoriteIcon = if (favoriteIcon == favoriteIconBorder) {
-                favoriteIconFilled
-            } else {
-                favoriteIconBorder
-            }
+        onClick = { favoriteIcon = if (favoriteIcon == favoriteIconBorder) {
+            favoriteIconFilled
+        } else {
+            favoriteIconBorder
+        }
             println("O usuário favoritou: ${user.name}")
         },
         shape = CircleShape,
@@ -157,7 +160,8 @@ val contentColor = Color(0xFFE7E7E7)
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = UserDAO()) {
+
+fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = UserDAO(), onProfile: () -> Unit ) {
     var indexPerson by remember { mutableIntStateOf(0) }
     var users by remember { mutableStateOf<List<User>>(emptyList()) }
     var personDisplay by remember { mutableStateOf<User?>(null) }
@@ -172,7 +176,6 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
             isLoading = false
         }
     }
-
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier.fillMaxSize(),
@@ -193,7 +196,14 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {  }) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "Favorite",
+                            tint = contentColor
+                        )
+                    }
+                    IconButton(onClick = { onProfile() }) {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = "Account",
@@ -227,7 +237,7 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                                 ) {
                                     Button(
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.Magenta,
+                                            containerColor = Color.Red,
                                             contentColor = Color.White
                                         ),
                                         modifier = Modifier.width(150.dp),
@@ -246,7 +256,7 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                                                 else (indexPerson - 1) % users.size
                                             personDisplay = users[indexPerson]
                                         },
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)
                                     ) {
                                         Text("Next")
                                     }
@@ -270,12 +280,12 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPrincipalPreview() {
-    val modifierScreen: Modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0xFF1A1A1A))
-        .padding(16.dp)
-    CinderPrincipalScreen(modifier = modifierScreen)
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPrincipalPreview() {
+//    val modifierScreen: Modifier = Modifier
+//        .fillMaxSize()
+//        .background(Color(0xFF1A1A1A))
+//        .padding(16.dp)
+//    CinderPrincipalScreen(modifier = modifierScreen)
+//}
