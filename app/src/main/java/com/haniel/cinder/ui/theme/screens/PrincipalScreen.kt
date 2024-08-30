@@ -16,10 +16,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -49,6 +54,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.haniel.cinder.R
@@ -56,6 +63,44 @@ import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
 import com.haniel.cinder.usuarioLogadoCinder
 
+@Composable
+fun BottomAppBarPrincipal(
+    onHomeClick: () -> Unit,
+    onFavoritesClick: () -> Unit,
+    onProfileClick: () -> Unit,
+    onChatClick: () -> Unit,
+    modifier: Modifier
+) {
+    BottomAppBar(
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.primary,
+    ) {
+        IconButton(onClick = onHomeClick) {
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = "Home"
+            )
+        }
+        IconButton(onClick = onFavoritesClick) {
+            Icon(
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Favorites"
+            )
+        }
+        IconButton(onClick = onProfileClick) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Profile"
+            )
+        }
+        IconButton(onClick = onChatClick) {
+            Icon(
+                imageVector = Icons.Default.Phone,
+                contentDescription = "Chat"
+            )
+        }
+    }
+}
 
 @Composable
 fun PersonCard(user: User) {
@@ -184,7 +229,7 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                 ),
                 title = { Text("Cinder") },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {/*TODO*/}) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = "Menu",
@@ -202,12 +247,21 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                     }
                     IconButton(onClick = { onProfile() }) {
                         Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Account",
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "Notification",
                             tint = contentColor
                         )
                     }
                 }
+            )
+        },
+        bottomBar = {
+            BottomAppBarPrincipal(
+                onHomeClick = { /*TODO*/ },
+                onFavoritesClick = { /*TODO*/ },
+                onProfileClick = { /*TODO*/ },
+                onChatClick = { /*TODO*/ },
+                modifier = modifier
             )
         },
         content = { paddingValues ->
