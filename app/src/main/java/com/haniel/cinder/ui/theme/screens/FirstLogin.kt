@@ -44,7 +44,8 @@ fun FirstLogin(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background).padding(0.dp,0.dp,0.dp,50.dp),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(0.dp, 0.dp, 0.dp, 50.dp),
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

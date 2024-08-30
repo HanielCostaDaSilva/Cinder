@@ -106,23 +106,26 @@ fun EditionScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             value = biograpy,
                             onValueChange = { biograpy = it },
                             label = { Text("Biografia") },
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text),
                             modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             onClick = {
-                                if (name.isNotBlank() && age.isNotBlank()) {
+                                val ageInt = age.toIntOrNull()
+                                if (name.isNotBlank() && ageInt != null) {
                                     isSaving = true
-                                    val updatedUser = user?.copy(name = name, age = age.toInt())
+                                    val updatedUser =
+                                        user?.copy(name = name, age = ageInt, biograpy = biograpy)
                                     updatedUser?.let {
                                         userDao.updateUser(it) {
                                             isSaving = false
                                             message = "Dados atualizados com sucesso!"
+                                            onBack()
                                         }
                                     }
                                 } else {
-                                    message = "Preencha todos os campos."
+                                    message = "Preencha todos os campos corretamente."
                                 }
                             },
                             modifier = Modifier.fillMaxWidth()
