@@ -131,6 +131,7 @@ fun PersonCard(user: User) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text("Nome: ${user.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
             Text("Idade: ${user.age}", fontSize = 18.sp)
         }
 
@@ -163,8 +164,7 @@ fun BiograpyCard(user: User) {
                 modifier = Modifier.fillMaxWidth(),
                 text = user.biograpy,
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 18.sp
             )
         }
     }
@@ -326,16 +326,6 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                         )
                     }
                 }
-
-                Text(
-                    text = "Bem vindo, \"$usuarioLogadoCinder\"",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp)
-                )
-
             }
         }
     )
