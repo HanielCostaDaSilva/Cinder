@@ -1,7 +1,6 @@
 package com.haniel.cinder.ui.theme.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -63,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
+import com.haniel.cinder.usuarioLogadoCinder
 
 @Composable
 fun BottomAppBarPrincipal(
@@ -327,6 +326,16 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                         )
                     }
                 }
+
+                Text(
+                    text = "Bem vindo, \"$usuarioLogadoCinder\"",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                )
+
             }
         }
     )

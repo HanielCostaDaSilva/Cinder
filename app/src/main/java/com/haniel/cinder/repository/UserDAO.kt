@@ -68,4 +68,8 @@ class UserDAO {
             }
     }
 
+    fun updateUser(it: User, function: () -> Unit) {
+
+    }
+
 }
