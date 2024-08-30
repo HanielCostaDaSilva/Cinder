@@ -1,7 +1,6 @@
 package com.haniel.cinder.ui.theme.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,8 +18,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -50,13 +52,46 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
+import com.haniel.cinder.usuarioLogadoCinder
 
+@Composable
+fun BottomAppBarPrincipal(
+    onHomeClick: () -> Unit,
+    onChatClick: () -> Unit,
+    modifier: Modifier
+) {
+    BottomAppBar(
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.primary,
+    ) {
+        IconButton(onClick = onHomeClick) {
+            Icon(
+                imageVector = Icons.Default.Home,
+                contentDescription = "Home"
+            )
+        }
+        IconButton(onClick = onChatClick) {
+            Icon(
+                imageVector = Icons.Default.MailOutline,
+                contentDescription = "Chat"
+            )
+        }
+
+        Text(
+            text = "Bem vindo, \"$usuarioLogadoCinder\"",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            modifier = Modifier
+                .padding(16.dp)
+        )
+
+    }
+}
 
 @Composable
 fun PersonCard(user: User) {
@@ -86,8 +121,8 @@ fun PersonCard(user: User) {
                     .clip(RoundedCornerShape(30.dp))
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Name: ${user.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Text("Age: ${user.age}", fontSize = 18.sp)
+            Text("Nome: ${user.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Text("Idade: ${user.age}", fontSize = 18.sp)
         }
 
     }
@@ -109,7 +144,7 @@ fun BiograpyCard(user: User) {
                 .fillMaxWidth()
         ) {
             Text(
-                "Biography",
+                "Biografia",
                 fontSize = 29.sp,
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic
@@ -126,14 +161,16 @@ fun BiograpyCard(user: User) {
     }
 }
 
+
 @Composable
 fun FavoritePersonButton(user: User, modifier: Modifier) {
+
     var favoriteIcon by remember { mutableStateOf(Icons.Filled.FavoriteBorder) }
     val favoriteIconFilled = Icons.Filled.FavoriteBorder
     val favoriteIconBorder = Icons.Filled.Favorite
 
     SmallFloatingActionButton(
-        modifier = modifier,
+        modifier = modifier.padding(10.dp),
 
         onClick = {
             favoriteIcon = if (favoriteIcon == favoriteIconBorder) {
@@ -157,7 +194,12 @@ val contentColor = Color(0xFFE7E7E7)
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = UserDAO()) {
+
+fun CinderPrincipalScreen(
+    modifier: Modifier = Modifier,
+    userDao: UserDAO = UserDAO(),
+    onProfile: () -> Unit
+) {
     var indexPerson by remember { mutableIntStateOf(0) }
     var users by remember { mutableStateOf<List<User>>(emptyList()) }
     var personDisplay by remember { mutableStateOf<User?>(null) }
@@ -172,7 +214,6 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
             isLoading = false
         }
     }
-
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier.fillMaxSize(),
@@ -184,7 +225,7 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                 ),
                 title = { Text("Cinder") },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {/*TODO*/ }) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = "Menu",
@@ -195,12 +236,26 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                 actions = {
                     IconButton(onClick = { }) {
                         Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "Favorite",
+                            tint = contentColor
+                        )
+                    }
+                    IconButton(onClick = { onProfile() }) {
+                        Icon(
                             imageVector = Icons.Default.Person,
-                            contentDescription = "Account",
+                            contentDescription = "Perfil",
                             tint = contentColor
                         )
                     }
                 }
+            )
+        },
+        bottomBar = {
+            BottomAppBarPrincipal(
+                onHomeClick = { /*TODO*/ },
+                onChatClick = { /*TODO*/ },
+                modifier = modifier
             )
         },
         content = { paddingValues ->
@@ -227,7 +282,7 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                                 ) {
                                     Button(
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.Magenta,
+                                            containerColor = Color.Red,
                                             contentColor = Color.White
                                         ),
                                         modifier = Modifier.width(150.dp),
@@ -246,7 +301,7 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                                                 else (indexPerson - 1) % users.size
                                             personDisplay = users[indexPerson]
                                         },
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)
                                     ) {
                                         Text("Next")
                                     }
@@ -265,17 +320,18 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                         )
                     }
                 }
+
             }
         }
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPrincipalPreview() {
-    val modifierScreen: Modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0xFF1A1A1A))
-        .padding(16.dp)
-    CinderPrincipalScreen(modifier = modifierScreen)
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPrincipalPreview() {
+//    val modifierScreen: Modifier = Modifier
+//        .fillMaxSize()
+//        .background(Color(0xFF1A1A1A))
+//        .padding(16.dp)
+//    CinderPrincipalScreen(modifier = modifierScreen)
+//}

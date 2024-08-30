@@ -42,9 +42,9 @@ import com.haniel.cinder.repository.UserDAO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.haniel.cinder.usuarioLogadoCinder
 
 val userDao: UserDAO = UserDAO();
-
 
 @Composable
 fun AuthScreen(
@@ -87,7 +87,7 @@ fun AuthScreen(
             onValueChange = { login = it },
             placeholder = { Text("Usuario") },
             colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Red,
+                focusedIndicatorColor = Color.Green,
                 unfocusedIndicatorColor = Color.Gray
             ),
             modifier = Modifier
@@ -102,7 +102,7 @@ fun AuthScreen(
             placeholder = { Text("Senha") },
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Red,
+                focusedIndicatorColor = Color.Green,
                 unfocusedIndicatorColor = Color.Gray
             ),
             modifier = Modifier
@@ -136,6 +136,7 @@ fun AuthScreen(
                                 mensagemErro = "Usuário não encontrado"
                             } else {
                                 if (user.password == senha) {
+                                    usuarioLogadoCinder = login
                                     onSignInClick(user)
                                 } else {
 

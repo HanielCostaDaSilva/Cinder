@@ -1,6 +1,7 @@
 package com.haniel.cinder
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -16,8 +17,11 @@ import androidx.navigation.compose.rememberNavController
 import com.haniel.cinder.model.User
 import com.haniel.cinder.ui.theme.screens.AuthScreen
 import com.haniel.cinder.ui.theme.screens.CinderPrincipalScreen
+import com.haniel.cinder.ui.theme.screens.EditionScreen
 import com.haniel.cinder.ui.theme.screens.FirstLogin
 import com.haniel.cinder.ui.theme.screens.RegisterScreen
+import com.haniel.cinder.ui.theme.screens.ProfileUserScreen
+
 
 class MainActivity : ComponentActivity() {
     private val modifierScreen: Modifier = Modifier
@@ -48,7 +52,9 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable("principal_screen") {
-                CinderPrincipalScreen(modifier = modifierScreen)
+                CinderPrincipalScreen(
+                    modifier = modifierScreen,
+                    onProfile = { navController.navigate("profileUser") })
             }
 
             composable("register_screen") {
@@ -66,6 +72,26 @@ class MainActivity : ComponentActivity() {
                         navController.navigate("auth_screen")
                     }, onNavigateToCadastro = {
                         navController.navigate("register_screen")
+                    }
+                )
+            }
+
+            composable("profileUser") {
+                ProfileUserScreen(
+                    modifier = modifierScreen,
+                    navigateToEdition = {
+                        navController.navigate("editionScreen")
+                    },
+                    navigateToLogin = {
+                        navController.navigate("auth_screen")
+                    }
+                )
+            }
+            composable("editionScreen") {
+                EditionScreen(
+                    modifier = modifierScreen,
+                    onBack = {
+                        navController.navigate("profileUser")
                     }
                 )
             }

@@ -68,4 +68,25 @@ class UserDAO {
             }
     }
 
+    fun updateUser(user: User, callback: (Boolean) -> Unit) {
+        db.collection("users").document(user.id).set(user)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
+    }
+
+    fun deleteUser(id: String, callback: (Boolean) -> Unit) {
+        db.collection("users").document(id)
+            .delete()
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
+    }
+
 }
