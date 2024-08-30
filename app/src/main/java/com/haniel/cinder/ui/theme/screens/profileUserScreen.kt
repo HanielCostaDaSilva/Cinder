@@ -1,6 +1,7 @@
 package com.haniel.cinder.ui.theme.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,15 +47,22 @@ import com.haniel.cinder.repository.UserDAO
 
 import com.haniel.cinder.usuarioLogadoCinder
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Unit) {
+fun ProfileUserScreen(
+    modifier: Modifier = Modifier,
+    navigateToEdition: () -> Unit,
+    navigateToLogin: () -> Unit
+) {
 
     var user by remember { mutableStateOf<User?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
     val userDao = UserDAO()
     val globalLogin = usuarioLogadoCinder
+
+    var message by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(globalLogin) {
         userDao.findByName(globalLogin) { fetchedUser ->
@@ -145,9 +153,17 @@ fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Un
                                             .clip(RoundedCornerShape(30.dp))
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
-                                    Text("Nome: ${it.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        "Nome: ${it.name}",
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                     Text("Idade: ${it.age}", fontSize = 18.sp)
-                                    Text("Biografia: ${it.biograpy}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        "Biografia: ${it.biograpy}",
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                             Spacer(modifier = Modifier.height(16.dp))
@@ -157,9 +173,42 @@ fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Un
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp)
-                                    .height(48.dp)
+                                    .height(40.dp)
                             ) {
                                 Text("Editar Informações")
+                            }
+
+                            Button(
+                                onClick = {
+                                    val userId = user?.id
+                                    if (userId != null) {
+                                        userDao.deleteUser(userId) { success ->
+                                            if (success) {
+                                                message = "Perfil excluído com sucesso!"
+                                                navigateToLogin()
+                                            } else {
+                                                message = "Erro ao excluir o perfil."
+                                            }
+                                        }
+                                    } else {
+                                        message = "Erro: Usuário não encontrado."
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp)
+                                    .height(40.dp)
+                            ) {
+                                Text("Excluir meu perfil", color = Color.Red)
+                            }
+
+                            message?.let {
+                                Text(
+                                    text = it,
+                                    color = if (it.contains("sucesso")) Color.Green else Color.Red,
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.padding(top = 10.dp)
+                                )
                             }
                         }
                     }
@@ -168,4 +217,3 @@ fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Un
         }
     )
 }
-

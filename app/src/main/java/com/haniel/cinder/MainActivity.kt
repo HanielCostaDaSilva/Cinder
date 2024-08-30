@@ -23,8 +23,7 @@ import com.haniel.cinder.ui.theme.screens.RegisterScreen
 import com.haniel.cinder.ui.theme.screens.ProfileUserScreen
 
 
-
-class   MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     private val modifierScreen: Modifier = Modifier
         .fillMaxSize()
         .background(Color(0xFF1A1A1A))
@@ -53,7 +52,9 @@ class   MainActivity : ComponentActivity() {
                 )
             }
             composable("principal_screen") {
-                CinderPrincipalScreen(modifier = modifierScreen, onProfile = {navController.navigate("profile_screen") })
+                CinderPrincipalScreen(
+                    modifier = modifierScreen,
+                    onProfile = { navController.navigate("profileUser") })
             }
 
             composable("register_screen") {
@@ -80,6 +81,9 @@ class   MainActivity : ComponentActivity() {
                     modifier = modifierScreen,
                     navigateToEdition = {
                         navController.navigate("editionScreen")
+                    },
+                    navigateToLogin = {
+                        navController.navigate("auth_screen")
                     }
                 )
             }
@@ -87,7 +91,7 @@ class   MainActivity : ComponentActivity() {
                 EditionScreen(
                     modifier = modifierScreen,
                     onBack = {
-                        navController.popBackStack()
+                        navController.navigate("profileUser")
                     }
                 )
             }
