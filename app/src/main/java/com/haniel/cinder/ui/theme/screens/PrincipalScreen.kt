@@ -16,12 +16,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -52,6 +56,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.haniel.cinder.R
@@ -62,6 +68,8 @@ import com.haniel.cinder.usuarioLogadoCinder
 @Composable
 fun BottomAppBarPrincipal(
     onHomeClick: () -> Unit,
+    onFavoritesClick: () -> Unit,
+    onProfileClick: () -> Unit,
     onChatClick: () -> Unit,
     modifier: Modifier
 ) {
@@ -69,26 +77,40 @@ fun BottomAppBarPrincipal(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary,
     ) {
-        IconButton(onClick = onHomeClick) {
+        IconButton(
+            onClick = onHomeClick,
+            modifier = Modifier.weight(1f)
+        ) {
             Icon(
                 imageVector = Icons.Default.Home,
                 contentDescription = "Home"
             )
         }
-        IconButton(onClick = onChatClick) {
+        IconButton(
+            onClick = onFavoritesClick,
+            modifier = Modifier.weight(1f)
+        ) {
             Icon(
-                imageVector = Icons.Default.MailOutline,
-                contentDescription = "Chat"
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Favorites"
             )
         }
-
-        Text(
-            text = "Bem vindo, \"$usuarioLogadoCinder\"",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Normal,
-            modifier = Modifier
-                .padding(16.dp)
-        )
+        IconButton(
+            onClick = onProfileClick,
+            modifier = Modifier.weight(1f)) {
+            Icon(
+                imageVector = Icons.Default.Person,
+                contentDescription = "Profile"
+            )
+        }
+        IconButton(
+            onClick = onChatClick,
+            modifier = Modifier.weight(1f)) {
+            Icon(
+                imageVector = Icons.Default.Phone,
+                contentDescription = "Account"
+            )
+        }
 
     }
 }
@@ -122,6 +144,7 @@ fun PersonCard(user: User) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text("Nome: ${user.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
             Text("Idade: ${user.age}", fontSize = 18.sp)
         }
 
@@ -154,8 +177,7 @@ fun BiograpyCard(user: User) {
                 modifier = Modifier.fillMaxWidth(),
                 text = user.biograpy,
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontSize = 18.sp
             )
         }
     }
@@ -172,12 +194,11 @@ fun FavoritePersonButton(user: User, modifier: Modifier) {
     SmallFloatingActionButton(
         modifier = modifier.padding(10.dp),
 
-        onClick = {
-            favoriteIcon = if (favoriteIcon == favoriteIconBorder) {
-                favoriteIconFilled
-            } else {
-                favoriteIconBorder
-            }
+        onClick = { favoriteIcon = if (favoriteIcon == favoriteIconBorder) {
+            favoriteIconFilled
+        } else {
+            favoriteIconBorder
+        }
             println("O usuário favoritou: ${user.name}")
         },
         shape = CircleShape,
@@ -195,11 +216,7 @@ val contentColor = Color(0xFFE7E7E7)
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 
-fun CinderPrincipalScreen(
-    modifier: Modifier = Modifier,
-    userDao: UserDAO = UserDAO(),
-    onProfile: () -> Unit
-) {
+fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = UserDAO(), onProfile: () -> Unit ) {
     var indexPerson by remember { mutableIntStateOf(0) }
     var users by remember { mutableStateOf<List<User>>(emptyList()) }
     var personDisplay by remember { mutableStateOf<User?>(null) }
@@ -225,7 +242,7 @@ fun CinderPrincipalScreen(
                 ),
                 title = { Text("Cinder") },
                 navigationIcon = {
-                    IconButton(onClick = {/*TODO*/ }) {
+                    IconButton(onClick = {/*TODO*/}) {
                         Icon(
                             imageVector = Icons.Default.Menu,
                             contentDescription = "Menu",
@@ -234,17 +251,17 @@ fun CinderPrincipalScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = {  }) {
                         Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = "Favorite",
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "Notificação",
                             tint = contentColor
                         )
                     }
                     IconButton(onClick = { onProfile() }) {
                         Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Perfil",
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edition",
                             tint = contentColor
                         )
                     }
@@ -254,6 +271,8 @@ fun CinderPrincipalScreen(
         bottomBar = {
             BottomAppBarPrincipal(
                 onHomeClick = { /*TODO*/ },
+                onFavoritesClick = { /*TODO*/ },
+                onProfileClick = { /*TODO*/ },
                 onChatClick = { /*TODO*/ },
                 modifier = modifier
             )
@@ -320,7 +339,6 @@ fun CinderPrincipalScreen(
                         )
                     }
                 }
-
             }
         }
     )
