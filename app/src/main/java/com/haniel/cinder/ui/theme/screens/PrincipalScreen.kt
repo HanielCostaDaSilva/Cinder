@@ -17,11 +17,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.BottomAppBar
@@ -75,30 +77,41 @@ fun BottomAppBarPrincipal(
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.primary,
     ) {
-        IconButton(onClick = onHomeClick) {
+        IconButton(
+            onClick = onHomeClick,
+            modifier = Modifier.weight(1f)
+        ) {
             Icon(
                 imageVector = Icons.Default.Home,
                 contentDescription = "Home"
             )
         }
-        IconButton(onClick = onFavoritesClick) {
+        IconButton(
+            onClick = onFavoritesClick,
+            modifier = Modifier.weight(1f)
+        ) {
             Icon(
                 imageVector = Icons.Default.Favorite,
                 contentDescription = "Favorites"
             )
         }
-        IconButton(onClick = onProfileClick) {
+        IconButton(
+            onClick = onProfileClick,
+            modifier = Modifier.weight(1f)) {
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "Profile"
             )
         }
-        IconButton(onClick = onChatClick) {
+        IconButton(
+            onClick = onChatClick,
+            modifier = Modifier.weight(1f)) {
             Icon(
                 imageVector = Icons.Default.Phone,
-                contentDescription = "Chat"
+                contentDescription = "Account"
             )
         }
+
     }
 }
 
@@ -240,15 +253,15 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                 actions = {
                     IconButton(onClick = {  }) {
                         Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = "Favorite",
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "Notificação",
                             tint = contentColor
                         )
                     }
                     IconButton(onClick = { onProfile() }) {
                         Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = "Notification",
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edition",
                             tint = contentColor
                         )
                     }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -122,10 +123,13 @@ fun ProfileUserScreen(
                                 .padding(16.dp)
                         ) {
                             Text(
-                                text = "Bem vindo ao seu Perfil, \"$usuarioLogadoCinder\"!",
-                                fontSize = 24.sp,
+                                text = "Bem vindo ao seu Perfil, $usuarioLogadoCinder!",
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(bottom = 16.dp)
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentWidth(Alignment.CenterHorizontally)
+                                    .padding(bottom = 16.dp)
                             )
                             Card(
                                 modifier = Modifier
@@ -159,10 +163,10 @@ fun ProfileUserScreen(
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text("Idade: ${it.age}", fontSize = 18.sp)
+                                    Spacer(modifier = Modifier.height(16.dp))
                                     Text(
                                         "Biografia: ${it.biograpy}",
-                                        fontSize = 24.sp,
-                                        fontWeight = FontWeight.Bold
+                                        fontSize = 20.sp
                                     )
                                 }
                             }
