@@ -33,5 +33,9 @@ class UserService {
         }
     }
 
+    fun sendMatch(userPrincipal:User, userToMatch:User): Boolean {
+        return userPrincipal.addMatchSend(userToMatch) and userToMatch.addMatchReceived(userPrincipal);
+
+    }
 
 }

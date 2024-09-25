@@ -1,3 +1,7 @@
 package com.haniel.cinder
 
-var usuarioLogadoCinder: String = ""
+import com.haniel.cinder.service.UserService
+
+var usuarioLogadoCinder: String = "";
+
+val userService = UserService()
