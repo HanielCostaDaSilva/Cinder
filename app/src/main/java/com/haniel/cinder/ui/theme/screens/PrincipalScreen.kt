@@ -13,16 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -30,11 +21,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -50,55 +38,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
-import com.haniel.cinder.usuarioLogadoCinder
 
-@Composable
-fun BottomAppBarPrincipal(
-    onHomeClick: () -> Unit,
-    onChatClick: () -> Unit,
-    modifier: Modifier
-) {
-    BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.primary,
-    ) {
-        IconButton(onClick = onHomeClick) {
-            Icon(
-                imageVector = Icons.Default.Home,
-                contentDescription = "Home"
-            )
-        }
-        IconButton(onClick = onChatClick) {
-            Icon(
-                imageVector = Icons.Default.MailOutline,
-                contentDescription = "Chat"
-            )
-        }
-
-        Text(
-            text = "Bem vindo, \"$usuarioLogadoCinder\"",
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Normal,
-            modifier = Modifier
-                .padding(16.dp)
-        )
-
-    }
-}
 
 @Composable
 fun PersonCard(user: User) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(400.dp)
+            .height(320.dp)
             .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -161,33 +116,32 @@ fun BiograpyCard(user: User) {
     }
 }
 
-
-@Composable
-fun FavoritePersonButton(user: User, modifier: Modifier) {
-
-    var favoriteIcon by remember { mutableStateOf(Icons.Filled.FavoriteBorder) }
-    val favoriteIconFilled = Icons.Filled.FavoriteBorder
-    val favoriteIconBorder = Icons.Filled.Favorite
-
-    SmallFloatingActionButton(
-        modifier = modifier.padding(10.dp),
-
-        onClick = {
-            favoriteIcon = if (favoriteIcon == favoriteIconBorder) {
-                favoriteIconFilled
-            } else {
-                favoriteIconBorder
-            }
-            println("O usuário favoritou: ${user.name}")
-        },
-        shape = CircleShape,
-        containerColor = Color.White,
-        contentColor = Color.Red
-
-    ) {
-        Icon(favoriteIcon, contentDescription = "Large floating action button")
-    }
-}
+//@Composable
+//fun FavoritePersonButton(user: User, modifier: Modifier) {
+//
+//    var favoriteIcon by remember { mutableStateOf(Icons.Filled.FavoriteBorder) }
+//    val favoriteIconFilled = Icons.Filled.FavoriteBorder
+//    val favoriteIconBorder = Icons.Filled.Favorite
+//
+//    SmallFloatingActionButton(
+//        modifier = modifier.padding(10.dp),
+//
+//        onClick = {
+//            favoriteIcon = if (favoriteIcon == favoriteIconBorder) {
+//                favoriteIconFilled
+//            } else {
+//                favoriteIconBorder
+//            }
+//            println("O usuário favoritou: ${user.name}")
+//        },
+//        shape = CircleShape,
+//        containerColor = Color.White,
+//        contentColor = Color.Red
+//
+//    ) {
+//        Icon(favoriteIcon, contentDescription = "Large floating action button")
+//    }
+//}
 
 val BackColor = Color(0xFF5A028F)
 val contentColor = Color(0xFFE7E7E7)
@@ -198,7 +152,9 @@ val contentColor = Color(0xFFE7E7E7)
 fun CinderPrincipalScreen(
     modifier: Modifier = Modifier,
     userDao: UserDAO = UserDAO(),
-    onProfile: () -> Unit
+    onProfile: () -> Unit,
+    onChatClick: () -> Unit,
+    onHomeClick: () -> Unit
 ) {
     var indexPerson by remember { mutableIntStateOf(0) }
     var users by remember { mutableStateOf<List<User>>(emptyList()) }
@@ -223,38 +179,30 @@ fun CinderPrincipalScreen(
                     containerColor = BackColor,
                     titleContentColor = contentColor,
                 ),
-                title = { Text("Cinder") },
-                navigationIcon = {
-                    IconButton(onClick = {/*TODO*/ }) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu",
-                            tint = contentColor
-                        )
+                title = {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Cinder", color = Color.White, fontFamily =  FontFamily.Serif)
                     }
                 },
-                actions = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = "Favorite",
-                            tint = contentColor
-                        )
-                    }
-                    IconButton(onClick = { onProfile() }) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Perfil",
-                            tint = contentColor
-                        )
-                    }
-                }
+//                navigationIcon = {
+//                    IconButton(onClick = {/*TODO*/ }) {
+//                        Icon(
+//                            imageVector = Icons.Default.Menu,
+//                            contentDescription = "Menu",
+//                            tint = contentColor
+//                        )
+//                    }
+//                },
             )
         },
         bottomBar = {
-            BottomAppBarPrincipal(
-                onHomeClick = { /*TODO*/ },
-                onChatClick = { /*TODO*/ },
+            BottomAppBarCinder(
+                onHomeClick = onHomeClick,
+                onChatClick = onChatClick,
+                onProfile = onProfile,
                 modifier = modifier
             )
         },
@@ -312,12 +260,6 @@ fun CinderPrincipalScreen(
                                 BiograpyCard(user = person)
                             }
                         }
-                        FavoritePersonButton(
-                            user = person,
-                            Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(16.dp)
-                        )
                     }
                 }
 
