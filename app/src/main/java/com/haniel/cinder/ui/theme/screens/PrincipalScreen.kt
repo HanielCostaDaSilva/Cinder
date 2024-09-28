@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -36,11 +37,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -56,12 +54,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
@@ -124,7 +123,7 @@ fun PersonCard(user: User) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(400.dp)
+            .height(320.dp)
             .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -187,7 +186,6 @@ fun BiograpyCard(user: User) {
     }
 }
 
-
 @Composable
 fun FavoritePersonButton(user: User, modifier: Modifier) {
 
@@ -214,13 +212,45 @@ fun FavoritePersonButton(user: User, modifier: Modifier) {
     }
 }
 
+//@Composable
+//fun FavoritePersonButton(user: User, modifier: Modifier) {
+//
+//    var favoriteIcon by remember { mutableStateOf(Icons.Filled.FavoriteBorder) }
+//    val favoriteIconFilled = Icons.Filled.FavoriteBorder
+//    val favoriteIconBorder = Icons.Filled.Favorite
+//
+//    SmallFloatingActionButton(
+//        modifier = modifier.padding(10.dp),
+//
+//        onClick = {
+//            favoriteIcon = if (favoriteIcon == favoriteIconBorder) {
+//                favoriteIconFilled
+//            } else {
+//                favoriteIconBorder
+//            }
+//            println("O usuário favoritou: ${user.name}")
+//        },
+//        shape = CircleShape,
+//        containerColor = Color.White,
+//        contentColor = Color.Red
+//
+//    ) {
+//        Icon(favoriteIcon, contentDescription = "Large floating action button")
+//    }
+//}
+
 val BackColor = Color(0xFF5A028F)
 val contentColor = Color(0xFFE7E7E7)
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-
-fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = UserDAO(), onProfile: () -> Unit ) {
+fun CinderPrincipalScreen(
+    modifier: Modifier = Modifier,
+    userDao: UserDAO = UserDAO(),
+    onProfile: () -> Unit,
+    onChatClick: () -> Unit,
+    onHomeClick: () -> Unit
+) {
     var indexPerson by remember { mutableIntStateOf(0) }
     var users by remember { mutableStateOf<List<User>>(emptyList()) }
     var personDisplay by remember { mutableStateOf<User?>(null) }
@@ -259,40 +289,30 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                     containerColor = BackColor,
                     titleContentColor = contentColor,
                 ),
-                title = { Text("Cinder") },
-                navigationIcon = {
-                    IconButton(onClick = {/*TODO*/}) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu",
-                            tint = contentColor
-                        )
+                title = {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Cinder", color = Color.White, fontFamily =  FontFamily.Serif)
                     }
                 },
-                actions = {
-                    IconButton(onClick = {  }) {
-                        Icon(
-                            imageVector = Icons.Filled.Notifications,
-                            contentDescription = "Notificação",
-                            tint = contentColor
-                        )
-                    }
-                    IconButton(onClick = { onProfile() }) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edition",
-                            tint = contentColor
-                        )
-                    }
-                }
+//                navigationIcon = {
+//                    IconButton(onClick = {/*TODO*/ }) {
+//                        Icon(
+//                            imageVector = Icons.Default.Menu,
+//                            contentDescription = "Menu",
+//                            tint = contentColor
+//                        )
+//                    }
+//                },
             )
         },
         bottomBar = {
-            BottomAppBarPrincipal(
-                onHomeClick = { /*TODO*/ },
-                onFavoritesClick = { /*TODO*/ },
-                onProfileClick = { /*TODO*/ },
-                onChatClick = { /*TODO*/ },
+            BottomAppBarCinder(
+                onHomeClick = onHomeClick,
+                onChatClick = onChatClick,
+                onProfile = onProfile,
                 modifier = modifier
             )
         },
