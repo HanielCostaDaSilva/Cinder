@@ -1,5 +1,6 @@
 package com.haniel.cinder
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -40,6 +41,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @SuppressLint("ComposableDestinationInComposeScope")
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun App() {
@@ -47,9 +49,9 @@ class MainActivity : ComponentActivity() {
         val userViewModel: UserViewModel = viewModel()
         NavHost(navController = navController, startDestination = "first_login") {
             composable("auth_screen") {
-                AuthScreen(modifier = modifierScreen, navController = navController, // Passando o navController
+                AuthScreen(modifier = modifierScreen,
+                    navController = navController, // Passando o navController
                     onSignInClick = { user: User ->
-                        Log.d("Main", "Hello ${user.name}")
                         if (user.interests.isEmpty()) {
                             navController.navigate("interestsScreen") // Usando navController para navegar
                         } else {
@@ -66,7 +68,7 @@ class MainActivity : ComponentActivity() {
                     modifier = modifierScreen,
                     onProfile = { navController.navigate("profileUser") },
                     onChatClick = { navController.navigate("chatScreen") },
-                    onHomeClick = {navController.navigate("principal_screen")}
+                    onHomeClick = { navController.navigate("principal_screen") }
                 )
             }
 
@@ -113,41 +115,41 @@ class MainActivity : ComponentActivity() {
                     onBack = { navController.navigate("auth_screen") },
                     onSave = { navController.navigate("principal_screen") }
                 )
-            composable("userSelectionScreen") {
-                val users = listOf(
-                    User(id = "1", name = "Usuario 1", imageID = R.drawable.cinder),
-                    User(id = "2", name = "Usuario 2", imageID = R.drawable.cinder)
-                )
+                composable("userSelectionScreen") {
+                    val users = listOf(
+                        User(id = "1", name = "Usuario 1", imageID = R.drawable.cinder),
+                        User(id = "2", name = "Usuario 2", imageID = R.drawable.cinder)
+                    )
 
-                UserSelectionScreen(
-                    users = users,
-                    onUserSelected = { user ->
-                        userViewModel.selectedUser = user
-                        navController.navigate("chatScreen"){
-                            popUpTo("userSelectionScreen") { inclusive = false }
+                    UserSelectionScreen(
+                        users = users,
+                        onUserSelected = { user ->
+                            userViewModel.selectedUser = user
+                            navController.navigate("chatScreen") {
+                                popUpTo("userSelectionScreen") { inclusive = false }
+                            }
+                        },
+                        onHomeClick = { navController.navigate("principal_screen") },
+                        onChatClick = { navController.navigate("userSelectionScreen") },
+                        onProfile = { navController.navigate("profileUser") }
+                    )
+                }
+
+                composable("chatScreen") {
+                    val chatViewModel: ChatViewModel = viewModel()
+                    val selectedUser = userViewModel.selectedUser
+
+                    if (selectedUser != null) {
+                        ChatScreen(viewModel = chatViewModel, user = selectedUser)
+                    } else {
+                        navController.navigate("userSelectionScreen") {
+                            popUpTo(navController.graph.startDestinationId) { inclusive = true }
                         }
-                    },
-                    onHomeClick = {navController.navigate("principal_screen")},
-                    onChatClick = {navController.navigate("userSelectionScreen")},
-                    onProfile = {navController.navigate("profileUser")}
-                )
-            }
-
-            composable("chatScreen") {
-                val chatViewModel: ChatViewModel = viewModel()
-                val selectedUser = userViewModel.selectedUser
-
-                if (selectedUser != null) {
-                    ChatScreen(viewModel = chatViewModel, user = selectedUser)
-                } else {
-                    navController.navigate("userSelectionScreen"){
-                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
                     }
                 }
             }
         }
     }
-
     @Preview(showBackground = true)
     @Composable
     fun MainActivityPreview() {
