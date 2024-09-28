@@ -5,7 +5,6 @@ import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.haniel.cinder.model.User
 
-
 class UserDAO {
     val db = FirebaseFirestore.getInstance()
 
@@ -87,6 +86,13 @@ class UserDAO {
             .addOnFailureListener {
                 callback(false)
             }
+    }
+
+    fun calculateCommonInterests(user1: User?, user2: User): Int {
+        if (user1 == null || user2 == null) {
+            return 0
+        }
+        return user1.interests.intersect(user2.interests).count()
     }
 
 }

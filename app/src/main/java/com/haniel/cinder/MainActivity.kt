@@ -19,6 +19,7 @@ import com.haniel.cinder.ui.theme.screens.AuthScreen
 import com.haniel.cinder.ui.theme.screens.CinderPrincipalScreen
 import com.haniel.cinder.ui.theme.screens.EditionScreen
 import com.haniel.cinder.ui.theme.screens.FirstLogin
+import com.haniel.cinder.ui.theme.screens.InterestsScreen
 import com.haniel.cinder.ui.theme.screens.RegisterScreen
 import com.haniel.cinder.ui.theme.screens.ProfileUserScreen
 
@@ -41,10 +42,14 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         NavHost(navController = navController, startDestination = "first_login") {
             composable("auth_screen") {
-                AuthScreen(modifier = modifierScreen,
+                AuthScreen(modifier = modifierScreen, navController = navController, // Passando o navController
                     onSignInClick = { user: User ->
-                        print("Hello ${user.name}")
-                        navController.navigate("principal_screen")
+                        Log.d("Main", "Hello ${user.name}")
+                        if (user.interests.isEmpty()) {
+                            navController.navigate("interestsScreen") // Usando navController para navegar
+                        } else {
+                            navController.navigate("principal_screen") // Usando navController para navegar
+                        }
                     },
                     ifNewGoTo = {
                         navController.navigate("register_screen")
@@ -95,9 +100,16 @@ class MainActivity : ComponentActivity() {
                     }
                 )
             }
+            // Adicionando a rota para a tela de interesses diretamente no NavHost
+            composable("interestsScreen") {
+                InterestsScreen( // Passando o navController para a tela de interesses
+                    navController = navController,
+                    onBack = { navController.navigate("auth_screen") },
+                    onSave = { navController.navigate("principal_screen") }
+                )
+            }
         }
     }
-
 
     @Preview(showBackground = true)
     @Composable

@@ -10,7 +10,8 @@ data class User(
     val age: Int = 0,
     val imageID: Int = 0,
     val biograpy: String = "",
-    val favoritesList: MutableList<String> = mutableListOf()
+    val favoritesList: MutableList<String> = mutableListOf(),
+    val interests: MutableList<String> = mutableListOf()
 
 ) {
     constructor() : this("","", "", 0, 0, "", mutableListOf())

@@ -1,5 +1,6 @@
 package com.haniel.cinder.ui.theme.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -43,14 +44,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.haniel.cinder.usuarioLogadoCinder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 val userDao: UserDAO = UserDAO();
 
 @Composable
 fun AuthScreen(
     modifier: Modifier = Modifier,
-    onSignInClick: (User) -> Unit = {},
-    ifNewGoTo: () -> Unit = {}
+    navController: NavHostController,
+    ifNewGoTo: () -> Unit = {},
+    onSignInClick: (User) -> Unit = {}
 ) {
 
     var scope = rememberCoroutineScope()
@@ -183,9 +187,17 @@ fun AuthScreen(
 @Preview(showBackground = true)
 @Composable
 fun DefaultAuthPreview() {
+    val navController = rememberNavController()
     val modifierScreen: Modifier = Modifier
         .fillMaxSize()
         .background(Color(0xFF1A1A1A))
         .padding(16.dp)
-    AuthScreen(modifier = modifierScreen)
+    AuthScreen(modifier = modifierScreen, navController = navController, onSignInClick = { user: User ->
+        Log.d("Main", "Hello ${user.name}")
+        if (user.interests.isEmpty()) {
+            navController.navigate("interestsScreen") // Usando navController para navegar
+        } else {
+            navController.navigate("principal_screen") // Usando navController para navegar
+        }
+    })
 }

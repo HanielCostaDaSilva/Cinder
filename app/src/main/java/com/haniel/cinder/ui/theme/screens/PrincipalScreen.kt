@@ -1,6 +1,7 @@
 package com.haniel.cinder.ui.theme.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -64,6 +66,8 @@ import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
 import com.haniel.cinder.usuarioLogadoCinder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun BottomAppBarPrincipal(
@@ -222,15 +226,30 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
     var personDisplay by remember { mutableStateOf<User?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
+    val loggedUser = remember { mutableStateOf<User?>(null) }
+    val globalLogin = usuarioLogadoCinder
+
     LaunchedEffect(Unit) {
+        userDao.findByName(globalLogin) { fetchedUser ->
+            loggedUser.value = fetchedUser
+        }
+    }
+
+    fun loadUsers() {
+        // Carrega os usuários e ordena por número de interesses em comum
         userDao.find { loadedUsers ->
-            users = loadedUsers
-            if (users.isNotEmpty()) {
-                personDisplay = users[indexPerson]
+            users = loadedUsers.sortedByDescending { user ->
+                calculateCommonInterests(loggedUser.value, user)
             }
+            personDisplay = users.getOrNull(indexPerson)
             isLoading = false
         }
     }
+
+    LaunchedEffect(Unit) {
+        loadUsers()
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier.fillMaxSize(),
@@ -290,47 +309,43 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
                                 .fillMaxSize()
                                 .padding(16.dp)
                         ) {
-                            item {
-                                PersonCard(person)
+                            items(users) { user ->
+                                PersonCard(user)
                                 Spacer(modifier = Modifier.height(16.dp))
-                            }
-                            item {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceEvenly
-                                ) {
-                                    Button(
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.Red,
-                                            contentColor = Color.White
-                                        ),
-                                        modifier = Modifier.width(150.dp),
-                                        onClick = {
-                                            indexPerson = (indexPerson + 1) % users.size
-                                            personDisplay = users[indexPerson]
-                                        },
-                                    ) {
-                                        Text("Match")
-                                    }
-                                    Button(
-                                        modifier = Modifier.width(150.dp),
-                                        onClick = {
-                                            indexPerson =
-                                                if (indexPerson - 1 < 0) users.size - 1
-                                                else (indexPerson - 1) % users.size
-                                            personDisplay = users[indexPerson]
-                                        },
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)
-                                    ) {
-                                        Text("Next")
-                                    }
-                                }
-                                Spacer(modifier = Modifier.height(16.dp))
-                            }
-                            item {
-                                BiograpyCard(user = person)
                             }
                         }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color.Red,
+                                    contentColor = Color.White
+                                ),
+                                modifier = Modifier.width(150.dp),
+                                onClick = {
+                                    indexPerson = (indexPerson + 1) % users.size
+                                    personDisplay = users[indexPerson]
+                                },
+                            ) {
+                                Text("Match")
+                            }
+                            Button(
+                                modifier = Modifier.width(150.dp),
+                                onClick = {
+                                    indexPerson =
+                                        if (indexPerson - 1 < 0) users.size - 1
+                                        else (indexPerson - 1) % users.size
+                                    personDisplay = users[indexPerson]
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)
+                            ) {
+                                Text("Next")
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        BiograpyCard(user = person)
                         FavoritePersonButton(
                             user = person,
                             Modifier
@@ -342,6 +357,14 @@ fun CinderPrincipalScreen(modifier: Modifier = Modifier, userDao: UserDAO = User
             }
         }
     )
+}
+
+// Função para calcular o número de interesses em comum
+fun calculateCommonInterests(user1: User?, user2: User): Int {
+    if (user1 == null || user2 == null) {
+        return 0
+    }
+    return user1.interests.intersect(user2.interests).count()
 }
 
 //@Preview(showBackground = true)
