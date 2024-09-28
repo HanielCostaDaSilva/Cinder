@@ -10,17 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,15 +42,25 @@ import com.haniel.cinder.repository.UserDAO
 
 import com.haniel.cinder.usuarioLogadoCinder
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Unit) {
-
+fun ProfileUserScreen(
+    modifier: Modifier = Modifier,
+    navigateToEdition: () -> Unit,
+    navigateToLogin: () -> Unit,
+    navigateToHome: () -> Unit,
+    onChatClick: () -> Unit,
+    onProfileClick: () -> Unit
+) {
     var user by remember { mutableStateOf<User?>(null) }
     var isLoading by remember { mutableStateOf(true) }
+    var showDialog by remember { mutableStateOf(false) }
 
     val userDao = UserDAO()
     val globalLogin = usuarioLogadoCinder
+
+    var message by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(globalLogin) {
         userDao.findByName(globalLogin) { fetchedUser ->
@@ -72,32 +78,22 @@ fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Un
                     containerColor = BackColor,
                     titleContentColor = contentColor,
                 ),
-                title = { Text("Cinder") },
-                navigationIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu",
-                            tint = contentColor
-                        )
+                title = {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Cinder", color = Color.White, fontFamily =  FontFamily.Serif)
                     }
                 },
-                actions = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.Favorite,
-                            contentDescription = "Favorite",
-                            tint = contentColor
-                        )
-                    }
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Account",
-                            tint = Color.Magenta
-                        )
-                    }
-                }
+            )
+        },
+        bottomBar = {
+            BottomAppBarCinder(
+                onHomeClick = navigateToHome,
+                onProfile = onProfileClick,
+                onChatClick = onChatClick,
+                modifier = Modifier
             )
         },
         content = { paddingValues ->
@@ -111,7 +107,8 @@ fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Un
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .padding(16.dp)
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.SpaceBetween // Ensure spacing between elements
                         ) {
                             Text(
                                 text = "Bem vindo ao seu Perfil, \"$usuarioLogadoCinder\"!",
@@ -122,7 +119,7 @@ fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Un
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(400.dp)
+                                    .weight(1f)
                                     .padding(8.dp),
                                 colors = CardDefaults.cardColors(
                                     containerColor = MaterialTheme.colorScheme.primary,
@@ -132,7 +129,9 @@ fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Un
                                 elevation = CardDefaults.cardElevation(4.dp)
                             ) {
                                 Column(
-                                    modifier = Modifier.padding(16.dp),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(16.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                     verticalArrangement = Arrangement.Center
                                 ) {
@@ -145,21 +144,53 @@ fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Un
                                             .clip(RoundedCornerShape(30.dp))
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
-                                    Text("Nome: ${it.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        "Nome: ${it.name}",
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                     Text("Idade: ${it.age}", fontSize = 18.sp)
-                                    Text("Biografia: ${it.biograpy}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                                    Text(
+                                        "Biografia: ${it.biograpy}",
+                                        fontSize = 24.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
                                 }
                             }
                             Spacer(modifier = Modifier.height(16.dp))
-
-                            Button(
-                                onClick = { navigateToEdition() },
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp)
-                                    .height(48.dp)
                             ) {
-                                Text("Editar Informações")
+                                Button(
+                                    onClick = { navigateToEdition() },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(40.dp)
+                                ) {
+                                    Text("Editar Informações")
+                                }
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Button(
+                                    onClick = { showDialog = true },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(40.dp)
+                                ) {
+                                    Text("Excluir meu perfil", color = Color.Red)
+                                }
+
+                                message?.let {
+                                    Text(
+                                        text = it,
+                                        color = if (it.contains("sucesso")) Color.Green else Color.Red,
+                                        fontSize = 16.sp,
+                                        modifier = Modifier.padding(top = 10.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -167,5 +198,43 @@ fun ProfileUserScreen(modifier: Modifier = Modifier, navigateToEdition: () -> Un
             }
         }
     )
-}
 
+    // Diálogo de confirmação
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Confirmar Exclusão") },
+            text = { Text("Você tem certeza que deseja excluir seu perfil?") },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        val userId = user?.id
+                        if (userId != null) {
+                            userDao.deleteUser(userId) { success ->
+                                if (success) {
+                                    message = "Perfil excluído com sucesso!"
+                                        navigateToLogin()
+
+                                } else {
+                                    message = "Erro ao excluir o perfil."
+                                }
+                            }
+                        } else {
+                            message = "Erro: Usuário não encontrado."
+                        }
+                        showDialog = false
+                    }
+                ) {
+                    Text("Confirmar")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showDialog = false }
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+}

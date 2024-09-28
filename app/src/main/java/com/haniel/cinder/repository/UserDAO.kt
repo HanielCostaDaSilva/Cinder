@@ -4,6 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
 import com.haniel.cinder.model.User
+import kotlinx.coroutines.tasks.await
 
 
 class UserDAO {
@@ -38,21 +39,13 @@ class UserDAO {
             }
     }
 
-    fun findbyId(id: String, callback: (User?) -> Unit) {
-        db.collection("users").whereEqualTo("id", id).get()
-            .addOnSuccessListener { document ->
-                if (!document.isEmpty) {
-                    val user = document.documents[0].toObject<User>()
-                    if (user != null) {
-                        callback(user)
-                    }
-                } else {
-                    callback(null)
-                }
-            }
-            .addOnFailureListener {
-                callback(null)
-            }
+    suspend fun findById(id: String): User? { // Mudando para suspender função
+        return try {
+            val document = db.collection("users").whereEqualTo("id", id).get().await()
+            document.documents.firstOrNull()?.toObject<User>()
+        } catch (e: Exception) {
+            null
+        }
     }
 
 
@@ -68,8 +61,25 @@ class UserDAO {
             }
     }
 
-    fun updateUser(it: User, function: () -> Unit) {
+    fun updateUser(user: User, callback: (Boolean) -> Unit) {
+        db.collection("users").document(user.id).set(user)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
+    }
 
+    fun deleteUser(id: String, callback: (Boolean) -> Unit) {
+        db.collection("users").document(id)
+            .delete()
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
     }
 
 }
