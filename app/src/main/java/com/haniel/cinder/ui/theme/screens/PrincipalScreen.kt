@@ -60,6 +60,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
@@ -78,7 +79,7 @@ fun BottomAppBarPrincipal(
         contentColor = MaterialTheme.colorScheme.primary,
     ) {
         IconButton(
-            onClick = onHomeClick,
+            onClick = {onHomeClick() },
             modifier = Modifier.weight(1f)
         ) {
             Icon(
@@ -135,12 +136,14 @@ fun PersonCard(user: User) {
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(id = if (user.imageID != 0) user.imageID else R.drawable.cinder),
+                painter = rememberAsyncImagePainter(user.imageUrl),
                 contentDescription = "${user.name} Image",
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(200.dp)
                     .padding(10.dp)
                     .clip(RoundedCornerShape(30.dp))
+                    .align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text("Nome: ${user.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)

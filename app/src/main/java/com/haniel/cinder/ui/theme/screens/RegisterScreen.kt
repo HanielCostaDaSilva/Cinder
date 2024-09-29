@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
@@ -59,6 +60,12 @@ fun RegisterScreen(
     var senha by remember { mutableStateOf("") }
     var mensagemErro by remember { mutableStateOf<String?>(null) }
     var scope = rememberCoroutineScope()
+    var imageUrl by remember { mutableStateOf("") }
+
+    
+    val defaultImageUrl = "https://cdn-icons-png.flaticon.com/512/6073/6073873.png"
+
+
 
     val modifierTextField = Modifier
         .padding(bottom = 24.dp)
@@ -69,6 +76,7 @@ fun RegisterScreen(
         modifier = modifier
             .background(MaterialTheme.colorScheme.background)
     ) {
+        /*
         val imagem = painterResource(id = R.drawable.image_logo)
         Image(
             painter = imagem,
@@ -84,6 +92,8 @@ fun RegisterScreen(
             fontWeight = FontWeight.Normal,
             modifier = Modifier.padding(bottom = 16.dp)
         )
+
+         */
         TextField(
             value = name,
             onValueChange = { name = it },
@@ -96,6 +106,7 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .padding(30.dp, 10.dp, 30.dp, 10.dp)
         )
+
         TextField(
             value = age,
             onValueChange = {
@@ -124,6 +135,7 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .padding(30.dp, 10.dp, 30.dp, 10.dp)
         )
+
         TextField(
             value = login,
             onValueChange = { login = it },
@@ -151,6 +163,33 @@ fun RegisterScreen(
         )
         Spacer(modifier = Modifier.height(10.dp))
 
+        TextField(
+            value = imageUrl,
+            onValueChange = { imageUrl = it },
+            placeholder = { Text("URL da Imagem") },
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Green,
+                unfocusedIndicatorColor = Color.Gray
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp, 10.dp, 30.dp, 10.dp)
+        )
+
+        Image(
+            painter = rememberImagePainter(if (imageUrl.isNotEmpty()) imageUrl else defaultImageUrl),
+            contentDescription = null,
+            modifier = Modifier.size(128.dp)
+        )
+
+ /*
+        TextField(
+            value = name,
+            onValueChange = { name = it },
+            placeholder = { Text("Nome") },
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+        )
+        */
         mensagemErro?.let {
             Text(
                 text = it,
@@ -169,7 +208,9 @@ fun RegisterScreen(
                     mensagemErro = "Alguns campos não foram preenchidos"
                 } else {
                     scope.launch {
-                        val usuario = User(name = login, password = senha, age = age.toIntOrNull() ?: 0 , biograpy = biography)
+                        val finalImageUrl = if (imageUrl.isEmpty()) defaultImageUrl else imageUrl
+
+                        val usuario = User(name = login, password = senha, age = age.toIntOrNull() ?: 0 , biograpy = biography,  imageUrl = finalImageUrl)
                         userDAO.add(usuario) {
                             onRegister()
                         }

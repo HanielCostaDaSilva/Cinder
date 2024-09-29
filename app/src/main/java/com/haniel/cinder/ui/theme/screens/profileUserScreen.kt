@@ -42,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
@@ -146,15 +147,20 @@ fun ProfileUserScreen(
                                 Column(
                                     modifier = Modifier.padding(16.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
                                 ) {
                                     Image(
-                                        painter = painterResource(id = if (it.imageID != 0) it.imageID else R.drawable.cinder),
-                                        contentDescription = "${it.name} Image",
+                                        painter = rememberAsyncImagePainter(it.imageUrl),
+                                        contentDescription = null,
                                         modifier = Modifier
                                             .fillMaxWidth()
+                                            .height(200.dp)
                                             .padding(10.dp)
                                             .clip(RoundedCornerShape(30.dp))
+                                            .align(Alignment.CenterHorizontally)
+
+                                            //.fillMaxWidth()
+                                            //.padding(10.dp)
+                                            //.clip(RoundedCornerShape(30.dp))
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
@@ -162,6 +168,7 @@ fun ProfileUserScreen(
                                         fontSize = 24.sp,
                                         fontWeight = FontWeight.Bold
                                     )
+                                    Spacer(modifier = Modifier.height(16.dp))
                                     Text("Idade: ${it.age}", fontSize = 18.sp)
                                     Spacer(modifier = Modifier.height(16.dp))
                                     Text(
@@ -170,7 +177,18 @@ fun ProfileUserScreen(
                                     )
                                 }
                             }
-                            Spacer(modifier = Modifier.height(16.dp))
+
+                            /*
+                            Button(
+                                onClick = {},
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+                                    .height(40.dp)
+                            ) {
+                                Text("Voltar")
+                            }
+                            */
 
                             Button(
                                 onClick = { navigateToEdition() },
