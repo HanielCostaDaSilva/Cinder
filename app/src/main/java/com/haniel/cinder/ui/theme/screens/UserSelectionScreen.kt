@@ -92,7 +92,7 @@ fun UserSelectionScreen(
             BottomAppBarCinder(
                 onHomeClick = onHomeClick,
                 onChatClick = onChatClick,
-                onProfile = onProfile,
+                onProfileClick = onProfile,
                 modifier = modifier
             )
         }

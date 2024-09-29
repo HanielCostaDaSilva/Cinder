@@ -39,10 +39,19 @@ class UserDAO {
             }
     }
 
-    suspend fun findById(id: String): User? { // Mudando para suspender função
-        return try {
+    suspend fun findById(id: String, callback: (User?) -> Unit){ // Mudando para suspender função
+        try {
             val document = db.collection("users").whereEqualTo("id", id).get().await()
             document.documents.firstOrNull()?.toObject<User>()
+            if (!document.isEmpty) {
+                val user = document.documents[0].toObject<User>()
+                if (user != null) {
+                    callback(user)
+                }
+
+            } else {
+                callback(null);
+            }
         } catch (e: Exception) {
             null
         }
@@ -81,5 +90,7 @@ class UserDAO {
                 callback(false)
             }
     }
+
+
 
 }

@@ -26,6 +26,7 @@ data class User(
             return this.matchReceivedList.add(u.id);
         return false;
     }
+
     fun removeMatchSend(u:User):Boolean{
         /**
         * remove o usuário da lista de matches.
@@ -60,4 +61,13 @@ data class User(
          * */
         return this.matchReceivedList.toMutableList();
     }
+
+    fun findMatchSend(user: User): Boolean {
+        return this.matchSendList.contains(user.id);
+    }
+
+    fun checkMutualMatch(user: User): Boolean {
+        return this.matchSendList.contains(user.id) && user.matchSendList.contains(this.id)
+    }
+
 }

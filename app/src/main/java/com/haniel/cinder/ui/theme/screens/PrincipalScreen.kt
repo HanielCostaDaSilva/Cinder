@@ -46,11 +46,8 @@ import androidx.compose.ui.unit.dp
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
-
 import com.haniel.cinder.userService
-import com.haniel.cinder.usuarioLogadoCinder
-
-
+import com.haniel.cinder.usuarioLogado
 
 @Composable
 fun PersonCard(user: User) {
@@ -120,32 +117,6 @@ fun BiograpyCard(user: User) {
     }
 }
 
-//@Composable
-//fun FavoritePersonButton(user: User, modifier: Modifier) {
-//
-//    var favoriteIcon by remember { mutableStateOf(Icons.Filled.FavoriteBorder) }
-//    val favoriteIconFilled = Icons.Filled.FavoriteBorder
-//    val favoriteIconBorder = Icons.Filled.Favorite
-//
-//    SmallFloatingActionButton(
-//        modifier = modifier.padding(10.dp),
-//
-//        onClick = {
-//            favoriteIcon = if (favoriteIcon == favoriteIconBorder) {
-//                favoriteIconFilled
-//            } else {
-//                favoriteIconBorder
-//            }
-//            println("O usuário favoritou: ${user.name}")
-//        },
-//        shape = CircleShape,
-//        containerColor = Color.White,
-//        contentColor = Color.Red
-//
-//    ) {
-//        Icon(favoriteIcon, contentDescription = "Large floating action button")
-//    }
-//}
 
 val BackColor = Color(0xFF5A028F)
 val contentColor = Color(0xFFE7E7E7)
@@ -158,12 +129,14 @@ fun CinderPrincipalScreen(
     userDao: UserDAO = UserDAO(),
     onProfile: () -> Unit,
     onChatClick: () -> Unit,
-    onHomeClick: () -> Unit
+    onHomeClick: () -> Unit,
+    onMatchesClick: ()-> Unit
 ) {
     var indexPerson by remember { mutableIntStateOf(0) }
     var users by remember { mutableStateOf<List<User>>(emptyList()) }
     var personDisplay by remember { mutableStateOf<User?>(null) }
     var isLoading by remember { mutableStateOf(true) }
+    var matchMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         userDao.find { loadedUsers ->
@@ -206,7 +179,8 @@ fun CinderPrincipalScreen(
             BottomAppBarCinder(
                 onHomeClick = onHomeClick,
                 onChatClick = onChatClick,
-                onProfile = onProfile,
+                onProfileClick = onProfile,
+                onMatchesClick= onMatchesClick,
                 modifier = modifier
             )
         },
@@ -239,7 +213,7 @@ fun CinderPrincipalScreen(
                                         ),
                                         modifier = Modifier.width(150.dp),
                                         onClick = {
-                                            //userService.sendMatch(user)
+                                            userService.sendMatch(usuarioLogado, personDisplay!!)
                                         },
                                     ) {
                                         Text("Match")
@@ -265,7 +239,6 @@ fun CinderPrincipalScreen(
                         }
                     }
                 }
-
             }
         }
     )

@@ -39,9 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
-
-import com.haniel.cinder.usuarioLogadoCinder
-
+import com.haniel.cinder.usuarioLogado
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,7 +56,7 @@ fun ProfileUserScreen(
     var showDialog by remember { mutableStateOf(false) }
 
     val userDao = UserDAO()
-    val globalLogin = usuarioLogadoCinder
+    val globalLogin = usuarioLogado.name
 
     var message by remember { mutableStateOf<String?>(null) }
 
@@ -91,7 +89,7 @@ fun ProfileUserScreen(
         bottomBar = {
             BottomAppBarCinder(
                 onHomeClick = navigateToHome,
-                onProfile = onProfileClick,
+                onProfileClick = onProfileClick,
                 onChatClick = onChatClick,
                 modifier = Modifier
             )
@@ -111,7 +109,7 @@ fun ProfileUserScreen(
                             verticalArrangement = Arrangement.SpaceBetween // Ensure spacing between elements
                         ) {
                             Text(
-                                text = "Bem vindo ao seu Perfil, \"$usuarioLogadoCinder\"!",
+                                text = "Bem vindo ao seu Perfil, \"$usuarioLogado.name\"!",
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(bottom = 16.dp)

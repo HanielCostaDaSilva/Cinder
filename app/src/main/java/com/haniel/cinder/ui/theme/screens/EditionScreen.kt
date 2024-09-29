@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
+import com.haniel.cinder.usuarioLogado
 
-import com.haniel.cinder.usuarioLogadoCinder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +47,7 @@ fun EditionScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     var message by remember { mutableStateOf<String?>(null) }
 
     val userDao = UserDAO()
-    val globalLogin = usuarioLogadoCinder // A variável global que contém o login
+    val globalLogin = usuarioLogado.name // A variável global que contém o login
 
     LaunchedEffect(globalLogin) {
         userDao.findByName(globalLogin) { fetchedUser ->

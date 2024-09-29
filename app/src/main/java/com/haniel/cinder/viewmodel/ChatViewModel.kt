@@ -35,10 +35,10 @@ class ChatViewModel : ViewModel(){
             conteudo = conteudo,
             data = System.currentTimeMillis()
         )
-        _messages.value = _messages.value + newMessage
+        _messages.value += newMessage
     }
 
     fun receiveMessage(message: Message) {
-        _messages.value = _messages.value + message
+        _messages.value += message
     }
 }
