@@ -47,6 +47,10 @@ import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
 
+import com.haniel.cinder.userService
+import com.haniel.cinder.usuarioLogadoCinder
+
+
 
 @Composable
 fun PersonCard(user: User) {
@@ -235,8 +239,7 @@ fun CinderPrincipalScreen(
                                         ),
                                         modifier = Modifier.width(150.dp),
                                         onClick = {
-                                            indexPerson = (indexPerson + 1) % users.size
-                                            personDisplay = users[indexPerson]
+                                            //userService.sendMatch(user)
                                         },
                                     ) {
                                         Text("Match")
