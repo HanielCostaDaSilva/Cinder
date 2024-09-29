@@ -145,9 +145,9 @@ fun PersonCard(user: User) {
                     .clip(RoundedCornerShape(30.dp))
                     .align(Alignment.CenterHorizontally)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Text("Nome: ${user.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Text("Idade: ${user.age}", fontSize = 18.sp)
         }
 
@@ -175,7 +175,7 @@ fun BiograpyCard(user: User) {
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Italic
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(2.dp))
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = user.biograpy,

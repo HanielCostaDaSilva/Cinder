@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,7 +63,7 @@ fun RegisterScreen(
     var scope = rememberCoroutineScope()
     var imageUrl by remember { mutableStateOf("") }
 
-    
+
     val defaultImageUrl = "https://cdn-icons-png.flaticon.com/512/6073/6073873.png"
 
 
@@ -76,64 +77,20 @@ fun RegisterScreen(
         modifier = modifier
             .background(MaterialTheme.colorScheme.background)
     ) {
-        /*
         val imagem = painterResource(id = R.drawable.image_logo)
         Image(
             painter = imagem,
             contentDescription = null,
             modifier = Modifier
                 .size(100.dp)
-                .padding(16.dp)
+                .padding(5.dp)
         )
         Text(
             text = "Faça seu cadastro",
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 32.sp,
+            fontSize = 24.sp,
             fontWeight = FontWeight.Normal,
             modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-         */
-        TextField(
-            value = name,
-            onValueChange = { name = it },
-            placeholder = { Text("Nome") },
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Green,
-                unfocusedIndicatorColor = Color.Gray
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(30.dp, 10.dp, 30.dp, 10.dp)
-        )
-
-        TextField(
-            value = age,
-            onValueChange = {
-                age = it
-            },
-            placeholder = { Text(" Idade") },
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Green,
-                unfocusedIndicatorColor = Color.Gray
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(30.dp, 10.dp, 30.dp, 10.dp)
-        )
-        TextField(
-            value = biography,
-            onValueChange = {
-                biography = it
-            },
-            placeholder = { Text(" Biografia") },
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Green,
-                unfocusedIndicatorColor = Color.Gray
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(30.dp, 10.dp, 30.dp, 10.dp)
         )
 
         TextField(
@@ -161,7 +118,49 @@ fun RegisterScreen(
                 .fillMaxWidth()
                 .padding(30.dp, 10.dp, 30.dp, 10.dp)
         )
-        Spacer(modifier = Modifier.height(10.dp))
+
+        TextField(
+            value = name,
+            onValueChange = { name = it },
+            placeholder = { Text("Nome") },
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Green,
+                unfocusedIndicatorColor = Color.Gray
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp, 10.dp, 30.dp, 10.dp)
+        )
+
+        TextField(
+            value = age,
+            onValueChange = {
+                age = it
+            },
+            placeholder = { Text(" Idade") },
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Green,
+                unfocusedIndicatorColor = Color.Gray
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp, 10.dp, 30.dp, 10.dp)
+        )
+
+        TextField(
+            value = biography,
+            onValueChange = {
+                biography = it
+            },
+            placeholder = { Text(" Biografia") },
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = Color.Green,
+                unfocusedIndicatorColor = Color.Gray
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp, 10.dp, 30.dp, 10.dp)
+        )
 
         TextField(
             value = imageUrl,
@@ -179,7 +178,7 @@ fun RegisterScreen(
         Image(
             painter = rememberImagePainter(if (imageUrl.isNotEmpty()) imageUrl else defaultImageUrl),
             contentDescription = null,
-            modifier = Modifier.size(128.dp)
+            modifier = Modifier.size(60.dp)
         )
 
  /*
@@ -228,7 +227,6 @@ fun RegisterScreen(
         ) {
             Text("Cadastre-se")
         }
-        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = "Possui conta?",
