@@ -22,8 +22,8 @@ data class User(
     }
 
     fun addMatchSend(u:User):Boolean{
-        if(u.id !in this.matchReceivedList)
-            return this.matchReceivedList.add(u.id);
+        if(u.id !in this.matchSendList)
+            return this.matchSendList.add(u.id);
         return false;
     }
 
