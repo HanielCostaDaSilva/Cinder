@@ -15,17 +15,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.haniel.cinder.model.User
-import com.haniel.cinder.ui.theme.screens.AuthScreen
-import com.haniel.cinder.ui.theme.screens.ChatScreen
-import com.haniel.cinder.ui.theme.screens.CinderPrincipalScreen
-import com.haniel.cinder.ui.theme.screens.EditionScreen
-import com.haniel.cinder.ui.theme.screens.FirstLogin
-import com.haniel.cinder.ui.theme.screens.RegisterScreen
-import com.haniel.cinder.ui.theme.screens.ProfileUserScreen
-import com.haniel.cinder.ui.theme.screens.UserSelectionScreen
+import com.haniel.cinder.ui.theme.screens.*
 import com.haniel.cinder.viewmodel.ChatViewModel
 import com.haniel.cinder.viewmodel.UserViewModel
-
 
 class MainActivity : ComponentActivity() {
     private val modifierScreen: Modifier = Modifier
@@ -44,41 +36,68 @@ class MainActivity : ComponentActivity() {
     fun App() {
         val navController = rememberNavController()
         val userViewModel: UserViewModel = viewModel()
+
         NavHost(navController = navController, startDestination = "first_login") {
             composable("auth_screen") {
-                AuthScreen(modifier = modifierScreen,
+                AuthScreen(
+                    modifier = modifierScreen,
+                    navController = navController,
                     onSignInClick = { user: User ->
-                        print("Hello ${user.name}")
-                        navController.navigate("principal_screen")
+                        if (user.interests.isEmpty()) {
+                            // Se o usuário não tiver interesses cadastrados, redireciona para a tela de interesses
+                            navController.navigate("interestsScreen")
+                        } else {
+                            // Se já tiver interesses, vai para a tela principal
+                            navController.navigate("principal_screen")
+                        }
                     },
                     ifNewGoTo = {
                         navController.navigate("register_screen")
                     }
                 )
             }
+
+            composable("interestsScreen") {
+                InterestsScreen(
+                    navController = navController,
+                    onBack = { navController.popBackStack() },
+                    onSave = {
+                        // Após salvar os interesses, navega para a tela principal
+                        navController.navigate("principal_screen") {
+                            popUpTo("interestsScreen") { inclusive = true }
+                        }
+                    }
+                )
+            }
+
             composable("principal_screen") {
                 CinderPrincipalScreen(
                     modifier = modifierScreen,
                     onProfile = { navController.navigate("profileUser") },
                     onChatClick = { navController.navigate("chatScreen") },
-                    onHomeClick = {navController.navigate("principal_screen")}
+                    onHomeClick = { navController.navigate("principal_screen") }
                 )
             }
 
             composable("register_screen") {
-                RegisterScreen(modifier = modifierScreen,
+                RegisterScreen(
+                    modifier = modifierScreen,
                     onRegister = {
                         navController.navigate("auth_screen")
                     },
                     goToLogin = {
                         navController.navigate("auth_screen")
-                    })
+                    }
+                )
             }
+
             composable("first_login") {
-                FirstLogin(modifier = modifierScreen,
+                FirstLogin(
+                    modifier = modifierScreen,
                     onSignInClick = {
                         navController.navigate("auth_screen")
-                    }, onNavigateToCadastro = {
+                    },
+                    onNavigateToCadastro = {
                         navController.navigate("register_screen")
                     }
                 )
@@ -93,6 +112,7 @@ class MainActivity : ComponentActivity() {
                     onProfileClick = {}
                 )
             }
+
             composable("editionScreen") {
                 EditionScreen(
                     modifier = modifierScreen,
@@ -101,6 +121,7 @@ class MainActivity : ComponentActivity() {
                     }
                 )
             }
+
             composable("userSelectionScreen") {
                 val users = listOf(
                     User(id = "1", name = "Usuario 1", imageID = R.drawable.cinder),
@@ -111,13 +132,13 @@ class MainActivity : ComponentActivity() {
                     users = users,
                     onUserSelected = { user ->
                         userViewModel.selectedUser = user
-                        navController.navigate("chatScreen"){
+                        navController.navigate("chatScreen") {
                             popUpTo("userSelectionScreen") { inclusive = false }
                         }
                     },
-                    onHomeClick = {navController.navigate("principal_screen")},
-                    onChatClick = {navController.navigate("userSelectionScreen")},
-                    onProfile = {navController.navigate("profileUser")}
+                    onHomeClick = { navController.navigate("principal_screen") },
+                    onChatClick = { navController.navigate("userSelectionScreen") },
+                    onProfile = { navController.navigate("profileUser") }
                 )
             }
 
@@ -128,7 +149,7 @@ class MainActivity : ComponentActivity() {
                 if (selectedUser != null) {
                     ChatScreen(viewModel = chatViewModel, user = selectedUser)
                 } else {
-                    navController.navigate("userSelectionScreen"){
+                    navController.navigate("userSelectionScreen") {
                         popUpTo(navController.graph.startDestinationId) { inclusive = true }
                     }
                 }

@@ -152,7 +152,6 @@ val contentColor = Color(0xFFE7E7E7)
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-
 fun CinderPrincipalScreen(
     modifier: Modifier = Modifier,
     userDao: UserDAO = UserDAO(),
@@ -167,13 +166,21 @@ fun CinderPrincipalScreen(
 
     LaunchedEffect(Unit) {
         userDao.find { loadedUsers ->
-            users = loadedUsers
-            if (users.isNotEmpty()) {
-                personDisplay = users[indexPerson]
+            val currentUser = userDao.findByName(usuarioLogadoCinder) { user ->
+                if (user != null) {
+                    // Ordenar os usuários com base nos interesses em comum
+                    users = loadedUsers.sortedByDescending { otherUser ->
+                        user.interests.intersect(otherUser.interests).size
+                    }
+                    if (users.isNotEmpty()) {
+                        personDisplay = users[indexPerson]
+                    }
+                }
             }
             isLoading = false
         }
     }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceVariant,
         modifier = modifier.fillMaxSize(),
@@ -188,18 +195,9 @@ fun CinderPrincipalScreen(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Cinder", color = Color.White, fontFamily =  FontFamily.Serif)
+                        Text("Cinder", color = Color.White, fontFamily = FontFamily.Serif)
                     }
-                },
-//                navigationIcon = {
-//                    IconButton(onClick = {/*TODO*/ }) {
-//                        Icon(
-//                            imageVector = Icons.Default.Menu,
-//                            contentDescription = "Menu",
-//                            tint = contentColor
-//                        )
-//                    }
-//                },
+                }
             )
         },
         bottomBar = {
@@ -239,7 +237,7 @@ fun CinderPrincipalScreen(
                                         ),
                                         modifier = Modifier.width(150.dp),
                                         onClick = {
-                                            //userService.sendMatch(user)
+                                            // Função de Match
                                         },
                                     ) {
                                         Text("Match")

@@ -5,37 +5,31 @@ import com.haniel.cinder.repository.UserDAO
 import kotlinx.coroutines.coroutineScope
 
 class UserService {
-    val userDAO: UserDAO = UserDAO();
+    private val userDAO: UserDAO = UserDAO()
 
-    fun getById(id: String, callback: (User?) -> Unit) {
-        return this.userDAO.findbyId(id, callback);
+    suspend fun getById(id: String): User? {
+        return userDAO.findById(id)
     }
 
     fun getByName(name: String, callback: (User?) -> Unit) {
-        return this.userDAO.findByName(name, callback);
+        userDAO.findByName(name, callback)
     }
 
-    suspend fun getById(ids: List<String>, callback: (List<User>?) -> Unit) {
+    suspend fun getByIds(ids: List<String>): List<User> {
         val userList = mutableListOf<User>()
 
         coroutineScope {
             ids.forEach { id ->
-                // Chama o método do DAO para buscar o usuário pelo ID
-                userDAO.findbyId(id) { user ->
-                    user?.let {
-                        userList.add(it)
-                    }
-                    if (userList.size == ids.size) {
-                        callback(userList) // Chama o callback quando todos forem adicionados
-                    }
+                val user = userDAO.findById(id)
+                user?.let {
+                    userList.add(it)
                 }
             }
         }
+        return userList
     }
 
-    fun sendMatch(userPrincipal:User, userToMatch:User): Boolean {
-        return userPrincipal.addMatchSend(userToMatch) and userToMatch.addMatchReceived(userPrincipal);
-
+    fun sendMatch(userPrincipal: User, userToMatch: User): Boolean {
+        return userPrincipal.addMatchSend(userToMatch) && userToMatch.addMatchReceived(userPrincipal)
     }
-
 }
