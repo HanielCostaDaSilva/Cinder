@@ -1,5 +1,6 @@
 package com.haniel.cinder.ui.theme.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +37,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
@@ -44,11 +47,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-val userDao: UserDAO = UserDAO();
+val userDao: UserDAO = UserDAO()
 
 @Composable
 fun AuthScreen(
     modifier: Modifier = Modifier,
+    navController: NavHostController,
     onSignInClick: (User) -> Unit = {},
     ifNewGoTo: () -> Unit = {}
 ) {
@@ -138,8 +142,13 @@ fun AuthScreen(
                                 if (user.password == senha) {
                                     usuarioLogado = user
                                     onSignInClick(user)
-                                } else {
 
+                                    if (user.interests.isEmpty()) {
+                                        navController.navigate("interestsScreen")
+                                    } else {
+                                        navController.navigate("principal_screen")
+                                    }
+                                } else {
                                     mensagemErro = "Senha Inválida, tente: ${user.password}"
                                 }
                             }
@@ -187,5 +196,13 @@ fun DefaultAuthPreview() {
         .fillMaxSize()
         .background(Color(0xFF1A1A1A))
         .padding(16.dp)
-    AuthScreen(modifier = modifierScreen)
+    val navController = rememberNavController() // Cria um mock de navController para o preview
+
+    AuthScreen(
+        modifier = modifierScreen,
+        navController = navController, // Passa o mockado para o preview
+        onSignInClick = { user: User ->
+            Log.d("Main", "Hello ${user.name}")
+        }
+    )
 }

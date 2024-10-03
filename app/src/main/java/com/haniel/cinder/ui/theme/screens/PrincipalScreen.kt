@@ -115,9 +115,16 @@ fun CinderPrincipalScreen(
 
     LaunchedEffect(Unit) {
         userDao.find { loadedUsers ->
-            users = loadedUsers
-            if (users.isNotEmpty()) {
-                personDisplay = users[indexPerson]
+            val currentUser = userDao.findByName(usuarioLogado) { user ->
+                if (user != null) {
+                    // Ordenar os usuários com base nos interesses em comum
+                    users = loadedUsers.sortedByDescending { otherUser ->
+                        user.interests.intersect(otherUser.interests).size
+                    }
+                    if (users.isNotEmpty()) {
+                        personDisplay = users[indexPerson]
+                    }
+                }
             }
             isLoading = false
         }

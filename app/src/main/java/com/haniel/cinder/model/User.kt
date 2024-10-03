@@ -12,7 +12,8 @@ data class User(
     val imageID: Int = 0,
     val biograpy: String = "",
     val matchReceivedList: MutableList<String> = mutableListOf(),
-    val matchSendList: MutableList<String> = mutableListOf()
+    val matchSendList: MutableList<String> = mutableListOf(),
+    val interests: MutableList<String> = mutableListOf()
 
 ) {
     constructor() : this("","", "", 0, 0, "", mutableListOf())

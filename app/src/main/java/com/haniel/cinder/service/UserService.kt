@@ -7,14 +7,14 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 class UserService {
-    val userDAO: UserDAO = UserDAO();
+    private val userDAO: UserDAO = UserDAO()
 
     suspend fun getById(id: String, callback: (User?) -> Unit) {
         return this.userDAO.findById(id, callback);
     }
 
     fun getByName(name: String, callback: (User?) -> Unit) {
-        return this.userDAO.findByName(name, callback);
+        userDAO.findByName(name, callback)
     }
 
     suspend fun getById(ids: List<String>): List<User> {
@@ -61,5 +61,4 @@ class UserService {
         val rolouMatch = userPrincipal.checkMutualMatch(userToMatch);
         return if (rolouMatch) 1 else 0
     }
-
 }

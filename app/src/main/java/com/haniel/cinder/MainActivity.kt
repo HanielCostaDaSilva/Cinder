@@ -45,13 +45,33 @@ class MainActivity : ComponentActivity() {
 
         NavHost(navController = navController, startDestination = "first_login") {
             composable("auth_screen") {
-                AuthScreen(modifier = modifierScreen,
+                AuthScreen(
+                    modifier = modifierScreen,
+                    navController = navController,
                     onSignInClick = { user: User ->
-                        print("Hello ${user.name}")
-                        navigateToScreen("principal_screen")
+                        if (user.interests.isEmpty()) {
+                            // Se o usuário não tiver interesses cadastrados, redireciona para a tela de interesses
+                            navigateToScreen("interestsScreen")
+                        } else {
+                            // Se já tiver interesses, vai para a tela principal
+                            navigateToScreen("principal_screen")
+                        }
                     },
                     ifNewGoTo = {
                         navigateToScreen("register_screen")
+                    }
+                )
+            }
+
+            composable("interestsScreen") {
+                InterestsScreen(
+                    navController = navController,
+                    onBack = { navController.popBackStack() },
+                    onSave = {
+                        // Após salvar os interesses, navega para a tela principal
+                        navController.navigate("principal_screen") {
+                            popUpTo("interestsScreen") { inclusive = true }
+                        }
                     }
                 )
             }
@@ -67,7 +87,8 @@ class MainActivity : ComponentActivity() {
             }
 
             composable("register_screen") {
-                RegisterScreen(modifier = modifierScreen,
+                RegisterScreen(
+                    modifier = modifierScreen,
                     onRegister = {
                         navigateToScreen("auth_screen")
                     },
@@ -77,7 +98,8 @@ class MainActivity : ComponentActivity() {
             }
 
             composable("first_login") {
-                FirstLogin(modifier = modifierScreen,
+                FirstLogin(
+                    modifier = modifierScreen,
                     onSignInClick = {
                         navigateToScreen("auth_screen")
                     }, onNavigateToCadastro = {
@@ -120,7 +142,9 @@ class MainActivity : ComponentActivity() {
                     users = users,
                     onUserSelected = { user ->
                         userViewModel.selectedUser = user
-                        navigateToScreen("chatScreen")
+                        navController.navigate("chatScreen") {
+                            popUpTo("userSelectionScreen") { inclusive = false }
+                        }
                     },
                     onHomeClick = { navigateToScreen("principal_screen") },
                     onChatClick = { navigateToScreen("userSelectionScreen") },
