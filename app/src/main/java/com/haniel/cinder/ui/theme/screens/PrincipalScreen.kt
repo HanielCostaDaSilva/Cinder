@@ -13,11 +13,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.widget.Toast
+import androidx.compose.ui.text.style.TextAlign
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
@@ -52,8 +52,8 @@ fun PersonCard(user: User) {
                     .clip(RoundedCornerShape(30.dp))
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Nome: ${user.name}", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            Text("Idade: ${user.age}", fontSize = 18.sp)
+            Text(" ${user.name}", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+            Text(" ${user.age} anos", fontSize = 20.sp)
         }
     }
 }
@@ -71,21 +71,18 @@ fun BiograpyCard(user: User) {
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text(
-                "Biografia",
-                fontSize = 29.sp,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Italic
-            )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = user.biograpy,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -109,22 +106,25 @@ fun CinderPrincipalScreen(
     var personDisplay by remember { mutableStateOf<User?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var matchMessage by remember { mutableStateOf<String?>(null) }
+    var usersWithInterests by remember { mutableStateOf<List<Pair<User, Int>>>(emptyList()) }
 
     // Obtenha o contexto atual
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         userDao.find { loadedUsers ->
-                if (usuarioLogado != null) {
-                    // Ordenar os usuários com base nos interesses em comum
-                    users = loadedUsers.sortedByDescending { otherUser ->
-                        usuarioLogado.interests.intersect(otherUser.interests).size
+            userDao.findByName(usuarioLogado.name) { user ->
+                if (user != null) {
+                    usersWithInterests = loadedUsers.map { otherUser ->
+                        otherUser to user.interests.intersect(otherUser.interests.toSet()).size
+                    }.sortedByDescending { it.second }
+
+                    if (usersWithInterests.isNotEmpty()) {
+                        personDisplay = usersWithInterests[indexPerson].first
                     }
-                    if (users.isNotEmpty()) {
-                        personDisplay = users[indexPerson]
-                    }
+                }
+                isLoading = false
             }
-            isLoading = false
         }
     }
 
@@ -188,7 +188,7 @@ fun CinderPrincipalScreen(
                                 ) {
                                     Button(
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color.Red,
+                                            containerColor = Color.Magenta,
                                             contentColor = Color.White
                                         ),
                                         modifier = Modifier.width(150.dp),
@@ -200,7 +200,7 @@ fun CinderPrincipalScreen(
 
                                             matchMessage = when (result) {
                                                 -1 -> "Esse usuário já foi adicionado."
-                                                0 -> "Match enviado!"
+                                                0 -> "Like enviado!"
                                                 1 -> {
                                                     "Rolou um Match!"
                                                     onChatClick()
@@ -210,17 +210,15 @@ fun CinderPrincipalScreen(
                                             }
                                         },
                                     ) {
-                                        Text("Match")
+                                        Text("Like")
                                     }
                                     Button(
                                         modifier = Modifier.width(150.dp),
                                         onClick = {
-                                            indexPerson =
-                                                if (indexPerson - 1 < 0) users.size - 1
-                                                else (indexPerson - 1) % users.size
-                                            personDisplay = users[indexPerson]
+                                            indexPerson = (indexPerson + 1) % usersWithInterests.size
+                                            personDisplay = usersWithInterests[indexPerson].first
                                         },
-                                        colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
                                     ) {
                                         Text("Next")
                                     }

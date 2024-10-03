@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,61 +30,16 @@ import com.haniel.cinder.model.User
 import com.haniel.cinder.userService
 import kotlinx.coroutines.launch
 
-@Composable
-fun MatchesScreen(currentUser: User, modifier: Modifier = Modifier) {
-    val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .background(MaterialTheme.colorScheme.surface)
-    ) {
-        //Matches Recebidos
-        Text(
-            text = "Matches Recebidos",
-            style = MaterialTheme.typography.titleMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold
-            )
-        )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(currentUser.matchSendList) { id ->
-                MatchItem(id = id)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Matches Enviados
-        Text(
-            text = "Matches Enviados",
-            style = MaterialTheme.typography.titleMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = FontWeight.Bold
-            )
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-            items(currentUser.matchSendList) { id ->
-                MatchItem(id = id)
-            }
-        }
-    }
-}
 
 @Composable
 fun MatchItem(id:String) {
     var name by remember { mutableStateOf(id) }
 
     LaunchedEffect(id) {
-    userService.getById(id)?.let {
-        name = it.name }
+        userService.getById(id)?.let {
+            name = it.name }
     }
     Row(
         modifier = Modifier
@@ -115,6 +71,90 @@ fun MatchItem(id:String) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MatchesScreen(currentUser: User,
+                  modifier: Modifier = Modifier,
+                  onProfile: () -> Unit,
+                  onChatClick: () -> Unit,
+                  onHomeClick: () -> Unit,
+                  onMatchesClick: () -> Unit
+)
+{
+
+    val coroutineScope = rememberCoroutineScope()
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Matches", color = Color.White, fontFamily =  FontFamily.Serif)
+                    }
+                },
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = Color(0xFF5A028F)
+                )
+            )
+        },
+        bottomBar = {
+            BottomAppBarCinder(
+                onHomeClick = onHomeClick,
+                onChatClick = onChatClick,
+                onProfileClick = onProfile,
+                onMatchesClick = onMatchesClick,
+                modifier = modifier
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues) // Usando paddingValues para garantir que o conteúdo não fique por baixo dos app bars
+                .padding(16.dp)
+                .background(MaterialTheme.colorScheme.surface)
+        ) {
+            // Conteúdo da tela
+            Text(
+                text = "Matches Recebidos",
+                style = MaterialTheme.typography.titleMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                items(currentUser.matchSendList) { id ->
+                    MatchItem(id = id)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Matches Enviados",
+                style = MaterialTheme.typography.titleMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                items(currentUser.matchSendList) { id ->
+                    MatchItem(id = id)
+                }
+            }
+        }
+    }
+
+
 
 suspend fun getUsersMatches(ids:List<String> ): List<User> {
     val usersGet= mutableListOf<User>();
@@ -125,13 +165,14 @@ suspend fun getUsersMatches(ids:List<String> ): List<User> {
     return usersGet
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MatchesScreenPreview() {
-    val mockUser = User(
-        matchReceivedList = mutableListOf("1", "2", "3"),
-        matchSendList = mutableListOf("4", "5", "6")
-    )
-
-    MatchesScreen(currentUser = mockUser)
+//@Preview(showBackground = true)
+//@Composable
+//fun MatchesScreenPreview() {
+//    val mockUser = User(
+//        matchReceivedList = mutableListOf("1", "2", "3"),
+//        matchSendList = mutableListOf("4", "5", "6")
+//    )
+//
+//    MatchesScreen(currentUser = mockUser)
+//}
 }

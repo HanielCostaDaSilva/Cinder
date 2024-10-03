@@ -149,7 +149,7 @@ fun AuthScreen(
                                         navController.navigate("principal_screen")
                                     }
                                 } else {
-                                    mensagemErro = "Senha Inválida, tente: ${user.password}"
+                                   // mensagemErro = "Senha Inválida, tente: ${user.password}"
                                 }
                             }
                         })

@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.haniel.cinder.R
@@ -49,19 +50,20 @@ fun ProfileUserScreen(
     navigateToLogin: () -> Unit,
     navigateToHome: () -> Unit,
     onChatClick: () -> Unit,
-    onProfileClick: () -> Unit
+    onProfileClick: () -> Unit,
+    onMatchesClick: () -> Unit
 ) {
     var user by remember { mutableStateOf<User?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
 
     val userDao = UserDAO()
-    val globalLogin = usuarioLogado.name
+    val globalLogin = usuarioLogado
 
     var message by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(globalLogin) {
-        userDao.findByName(globalLogin) { fetchedUser ->
+        userDao.findByName(globalLogin.name) { fetchedUser ->
             user = fetchedUser
             isLoading = false
         }
@@ -81,7 +83,7 @@ fun ProfileUserScreen(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Cinder", color = Color.White, fontFamily =  FontFamily.Serif)
+                        Text("Perfil", color = Color.White, fontFamily =  FontFamily.Serif)
                     }
                 },
             )
@@ -91,6 +93,7 @@ fun ProfileUserScreen(
                 onHomeClick = navigateToHome,
                 onProfileClick = onProfileClick,
                 onChatClick = onChatClick,
+                onMatchesClick = onMatchesClick,
                 modifier = Modifier
             )
         },
@@ -106,12 +109,14 @@ fun ProfileUserScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(16.dp),
-                            verticalArrangement = Arrangement.SpaceBetween // Ensure spacing between elements
+                            verticalArrangement = Arrangement.SpaceBetween,// Ensure spacing between elements
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Bem vindo ao seu Perfil, \"$usuarioLogado.name\"!",
-                                fontSize = 24.sp,
+                                text = "Bem vindo ao seu Perfil, \"${usuarioLogado.name}\"!",
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(bottom = 16.dp)
                             )
                             Card(
@@ -143,15 +148,17 @@ fun ProfileUserScreen(
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
-                                        "Nome: ${it.name}",
-                                        fontSize = 24.sp,
+                                        " ${it.name}",
+                                        fontSize = 20.sp,
                                         fontWeight = FontWeight.Bold
                                     )
-                                    Text("Idade: ${it.age}", fontSize = 18.sp)
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(" ${it.age} anos", fontSize = 18.sp,fontWeight = FontWeight.Bold)
+                                    Spacer(modifier = Modifier.height(8.dp))
                                     Text(
-                                        "Biografia: ${it.biograpy}",
-                                        fontSize = 24.sp,
-                                        fontWeight = FontWeight.Bold
+                                        " ${it.biograpy}",
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Light
                                     )
                                 }
                             }

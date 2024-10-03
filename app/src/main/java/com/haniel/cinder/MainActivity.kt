@@ -114,28 +114,33 @@ class MainActivity : ComponentActivity() {
                     navigateToLogin = { navigateToScreen("auth_screen") },
                     navigateToHome = { navigateToScreen("principal_screen") },
                     onChatClick = { navigateToScreen("userSelectionScreen") },
-                    onProfileClick = {}
+                    onProfileClick = {} ,
+                    onMatchesClick = { navigateToScreen("matches_screen") }
                 )
             }
 
             composable("editionScreen") {
                 EditionScreen(
                     modifier = modifierScreen,
-                    onBack = { navController.popBackStack() }
+                    onBack = {  navigateToScreen("profileUser") }
                 )
             }
 
             composable("matches_screen") {
                 MatchesScreen(
                     currentUser = usuarioLogado,
-                    modifier = modifierScreen
+                    modifier = modifierScreen ,
+                    onHomeClick = { navigateToScreen("principal_screen") },
+                    onChatClick = { navigateToScreen("userSelectionScreen") },
+                    onProfile = { navigateToScreen("profileUser") },
+                    onMatchesClick = { navigateToScreen("matches_screen") }
                 )
             }
 
             composable("userSelectionScreen") {
                 val users = listOf(
-                    User(id = "1", name = "Usuario 1", imageID = R.drawable.cinder),
-                    User(id = "2", name = "Usuario 2", imageID = R.drawable.cinder)
+                    User(id = "1", name = "karla", imageID = R.drawable.karla_fernades),
+                    User(id = "2", name = "Mary", imageID = R.drawable.mary_lopez)
                 )
 
                 UserSelectionScreen(
@@ -148,7 +153,8 @@ class MainActivity : ComponentActivity() {
                     },
                     onHomeClick = { navigateToScreen("principal_screen") },
                     onChatClick = { navigateToScreen("userSelectionScreen") },
-                    onProfile = { navigateToScreen("profileUser") }
+                    onProfile = { navigateToScreen("profileUser") },
+                    onMatchesClick = { navigateToScreen("matches_screen") }
                 )
             }
 
