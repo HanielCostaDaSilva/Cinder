@@ -70,7 +70,8 @@ fun UserSelectionScreen(
     onUserSelected: (User) -> Unit,
     onProfile: () -> Unit,
     onChatClick: () -> Unit,
-    onHomeClick: () -> Unit
+    onHomeClick: () -> Unit,
+    onMatchesClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -92,7 +93,8 @@ fun UserSelectionScreen(
             BottomAppBarCinder(
                 onHomeClick = onHomeClick,
                 onChatClick = onChatClick,
-                onProfile = onProfile,
+                onProfileClick = onProfile,
+                onMatchesClick = onMatchesClick,
                 modifier = modifier
             )
         }

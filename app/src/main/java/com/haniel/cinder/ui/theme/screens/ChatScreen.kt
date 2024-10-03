@@ -1,5 +1,6 @@
 package com.haniel.cinder.ui.theme.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.haniel.cinder.model.Message
@@ -102,4 +104,14 @@ fun MessageItem(message: Message) {
 fun formatTimestamp(data: Long): String {
     val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
     return sdf.format(Date(data))
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultChatPreview() {
+    val modifierScreen: Modifier = Modifier
+        .fillMaxSize()
+        .background(Color(0xFF1A1A1A))
+        .padding(16.dp)
+    ChatScreen(ChatViewModel(), User())
 }
