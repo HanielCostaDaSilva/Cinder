@@ -51,7 +51,6 @@ import com.haniel.cinder.userService
 import com.haniel.cinder.usuarioLogadoCinder
 
 
-
 @Composable
 fun PersonCard(user: User) {
     Card(
@@ -120,32 +119,6 @@ fun BiograpyCard(user: User) {
     }
 }
 
-//@Composable
-//fun FavoritePersonButton(user: User, modifier: Modifier) {
-//
-//    var favoriteIcon by remember { mutableStateOf(Icons.Filled.FavoriteBorder) }
-//    val favoriteIconFilled = Icons.Filled.FavoriteBorder
-//    val favoriteIconBorder = Icons.Filled.Favorite
-//
-//    SmallFloatingActionButton(
-//        modifier = modifier.padding(10.dp),
-//
-//        onClick = {
-//            favoriteIcon = if (favoriteIcon == favoriteIconBorder) {
-//                favoriteIconFilled
-//            } else {
-//                favoriteIconBorder
-//            }
-//            println("O usuário favoritou: ${user.name}")
-//        },
-//        shape = CircleShape,
-//        containerColor = Color.White,
-//        contentColor = Color.Red
-//
-//    ) {
-//        Icon(favoriteIcon, contentDescription = "Large floating action button")
-//    }
-//}
 
 val BackColor = Color(0xFF5A028F)
 val contentColor = Color(0xFFE7E7E7)
@@ -161,6 +134,7 @@ fun CinderPrincipalScreen(
 ) {
     var indexPerson by remember { mutableIntStateOf(0) }
     var users by remember { mutableStateOf<List<User>>(emptyList()) }
+    var usersWithInterests by remember { mutableStateOf<List<Pair<User, Int>>>(emptyList()) }
     var personDisplay by remember { mutableStateOf<User?>(null) }
     var isLoading by remember { mutableStateOf(true) }
 
@@ -168,12 +142,12 @@ fun CinderPrincipalScreen(
         userDao.find { loadedUsers ->
             val currentUser = userDao.findByName(usuarioLogadoCinder) { user ->
                 if (user != null) {
-                    // Ordenar os usuários com base nos interesses em comum
-                    users = loadedUsers.sortedByDescending { otherUser ->
-                        user.interests.intersect(otherUser.interests).size
-                    }
-                    if (users.isNotEmpty()) {
-                        personDisplay = users[indexPerson]
+                    usersWithInterests = loadedUsers.map { otherUser ->
+                        otherUser to user.interests.intersect(otherUser.interests.toSet()).size
+                    }.sortedByDescending { it.second } // Ordenar pela quantidade de interesses em comum
+
+                    if (usersWithInterests.isNotEmpty()) {
+                        personDisplay = usersWithInterests[indexPerson].first
                     }
                 }
             }
@@ -237,18 +211,15 @@ fun CinderPrincipalScreen(
                                         ),
                                         modifier = Modifier.width(150.dp),
                                         onClick = {
-                                            // Função de Match
-                                        },
+                                        }
                                     ) {
-                                        Text("Match")
+                                        Text("Like")
                                     }
                                     Button(
                                         modifier = Modifier.width(150.dp),
                                         onClick = {
-                                            indexPerson =
-                                                if (indexPerson - 1 < 0) users.size - 1
-                                                else (indexPerson - 1) % users.size
-                                            personDisplay = users[indexPerson]
+                                            indexPerson = (indexPerson + 1) % usersWithInterests.size
+                                            personDisplay = usersWithInterests[indexPerson].first
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = Color.Magenta)
                                     ) {

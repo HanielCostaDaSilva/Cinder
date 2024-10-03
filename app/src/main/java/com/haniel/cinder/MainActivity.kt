@@ -124,8 +124,8 @@ class MainActivity : ComponentActivity() {
 
             composable("userSelectionScreen") {
                 val users = listOf(
-                    User(id = "1", name = "Usuario 1", imageID = R.drawable.cinder),
-                    User(id = "2", name = "Usuario 2", imageID = R.drawable.cinder)
+                    User(id = "1", name = "joaquim", imageID = R.drawable.cinder),
+                    User(id = "2", name = "Leticia", imageID = R.drawable.cinder)
                 )
 
                 UserSelectionScreen(
