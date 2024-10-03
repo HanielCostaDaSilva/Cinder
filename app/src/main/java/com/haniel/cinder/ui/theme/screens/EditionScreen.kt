@@ -41,8 +41,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
-
-import com.haniel.cinder.usuarioLogadoCinder
+import com.haniel.cinder.usuarioLogado
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,10 +56,10 @@ fun EditionScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     var imageUrl by remember { mutableStateOf("") }
 
     val userDao = UserDAO()
-    val globalLogin = usuarioLogadoCinder
+    val globalLogin = usuarioLogado// A variável global que contém o login
 
     LaunchedEffect(globalLogin) {
-        userDao.findByName(globalLogin) { fetchedUser ->
+        userDao.findByName(globalLogin.name) { fetchedUser ->
             user = fetchedUser
             if (fetchedUser != null) {
                 name = fetchedUser.name
