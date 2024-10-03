@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -58,24 +59,24 @@ fun FirstLogin(
                 .padding(16.dp)
         )
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Conecte-se\ne descubra\nnovas",
+            text = "Clique\ne encontre\nseu par",
             fontSize = 40.sp,
             color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Normal,
+            fontFamily = FontFamily.Serif,
             textAlign = TextAlign.Center
         )
         Text(
-            text = "conexões",
-            fontSize = 45.sp,
+            text = "Perfeito",
+            fontSize = 60.sp,
             color = Color(0xFF5A028F),
-            fontWeight = FontWeight.ExtraBold,
+            fontFamily = FontFamily.Cursive,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
         Button(
             onClick = { onSignInClick() },
@@ -85,11 +86,12 @@ fun FirstLogin(
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(30.dp, 10.dp, 30.dp, 10.dp)
+                .padding(40.dp, 10.dp, 40.dp, 10.dp)
                 .height(50.dp)
         ) {
             Text(text = "FAZER LOGIN", fontWeight = FontWeight.Bold)
         }
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(text = "Ou faça login usando", fontWeight = FontWeight.Light)
 

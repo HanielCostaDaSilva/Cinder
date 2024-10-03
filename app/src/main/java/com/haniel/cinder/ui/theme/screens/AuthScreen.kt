@@ -42,10 +42,10 @@ import androidx.navigation.compose.rememberNavController
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
+import com.haniel.cinder.usuarioLogado
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.haniel.cinder.usuarioLogadoCinder
 
 val userDao: UserDAO = UserDAO()
 
@@ -140,7 +140,7 @@ fun AuthScreen(
                                 mensagemErro = "Usuário não encontrado"
                             } else {
                                 if (user.password == senha) {
-                                    usuarioLogadoCinder = login
+                                    usuarioLogado = user
                                     onSignInClick(user)
 
                                     if (user.interests.isEmpty()) {
@@ -149,7 +149,7 @@ fun AuthScreen(
                                         navController.navigate("principal_screen")
                                     }
                                 } else {
-                                    mensagemErro = "Senha Inválida, tente: ${user.password}"
+                                   // mensagemErro = "Senha Inválida, tente: ${user.password}"
                                 }
                             }
                         })

@@ -9,7 +9,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,6 +36,13 @@ class MainActivity : ComponentActivity() {
         val navController = rememberNavController()
         val userViewModel: UserViewModel = viewModel()
 
+        // Função de navegação reutilizável
+        fun navigateToScreen(route: String) {
+            navController.navigate(route) {
+                popUpTo(navController.graph.startDestinationId) { inclusive = false }
+            }
+        }
+
         NavHost(navController = navController, startDestination = "first_login") {
             composable("auth_screen") {
                 AuthScreen(
@@ -45,14 +51,14 @@ class MainActivity : ComponentActivity() {
                     onSignInClick = { user: User ->
                         if (user.interests.isEmpty()) {
                             // Se o usuário não tiver interesses cadastrados, redireciona para a tela de interesses
-                            navController.navigate("interestsScreen")
+                            navigateToScreen("interestsScreen")
                         } else {
                             // Se já tiver interesses, vai para a tela principal
-                            navController.navigate("principal_screen")
+                            navigateToScreen("principal_screen")
                         }
                     },
                     ifNewGoTo = {
-                        navController.navigate("register_screen")
+                        navigateToScreen("register_screen")
                     }
                 )
             }
@@ -73,9 +79,10 @@ class MainActivity : ComponentActivity() {
             composable("principal_screen") {
                 CinderPrincipalScreen(
                     modifier = modifierScreen,
-                    onProfile = { navController.navigate("profileUser") },
-                    onChatClick = { navController.navigate("chatScreen") },
-                    onHomeClick = { navController.navigate("principal_screen") }
+                    onProfile = { navigateToScreen("profileUser") },
+                    onChatClick = { navigateToScreen("chatScreen") },
+                    onHomeClick = { navigateToScreen("principal_screen") },
+                    onMatchesClick = { navigateToScreen("matches_screen") }
                 )
             }
 
@@ -83,49 +90,57 @@ class MainActivity : ComponentActivity() {
                 RegisterScreen(
                     modifier = modifierScreen,
                     onRegister = {
-                        navController.navigate("auth_screen")
+                        navigateToScreen("auth_screen")
                     },
                     goToLogin = {
-                        navController.navigate("auth_screen")
-                    }
-                )
+                        navigateToScreen("auth_screen")
+                    })
             }
 
             composable("first_login") {
                 FirstLogin(
                     modifier = modifierScreen,
                     onSignInClick = {
-                        navController.navigate("auth_screen")
-                    },
-                    onNavigateToCadastro = {
-                        navController.navigate("register_screen")
+                        navigateToScreen("auth_screen")
+                    }, onNavigateToCadastro = {
+                        navigateToScreen("register_screen")
                     }
                 )
             }
 
             composable("profileUser") {
                 ProfileUserScreen(
-                    navigateToEdition = { navController.navigate("editionScreen") },
-                    navigateToLogin = { navController.navigate("auth_screen") },
-                    navigateToHome = { navController.navigate("principal_screen") },
-                    onChatClick = { navController.navigate("userSelectionScreen") },
-                    onProfileClick = {}
+                    navigateToEdition = { navigateToScreen("editionScreen") },
+                    navigateToLogin = { navigateToScreen("auth_screen") },
+                    navigateToHome = { navigateToScreen("principal_screen") },
+                    onChatClick = { navigateToScreen("userSelectionScreen") },
+                    onProfileClick = {} ,
+                    onMatchesClick = { navigateToScreen("matches_screen") }
                 )
             }
 
             composable("editionScreen") {
                 EditionScreen(
                     modifier = modifierScreen,
-                    onBack = {
-                        navController.popBackStack()
-                    }
+                    onBack = {  navigateToScreen("profileUser") }
+                )
+            }
+
+            composable("matches_screen") {
+                MatchesScreen(
+                    currentUser = usuarioLogado,
+                    modifier = modifierScreen ,
+                    onHomeClick = { navigateToScreen("principal_screen") },
+                    onChatClick = { navigateToScreen("userSelectionScreen") },
+                    onProfile = { navigateToScreen("profileUser") },
+                    onMatchesClick = { navigateToScreen("matches_screen") }
                 )
             }
 
             composable("userSelectionScreen") {
                 val users = listOf(
-                    User(id = "1", name = "Usuario 1", imageID = R.drawable.cinder),
-                    User(id = "2", name = "Usuario 2", imageID = R.drawable.cinder)
+                    User(id = "1", name = "karla", imageID = R.drawable.karla_fernades),
+                    User(id = "2", name = "Mary", imageID = R.drawable.mary_lopez)
                 )
 
                 UserSelectionScreen(
@@ -136,9 +151,10 @@ class MainActivity : ComponentActivity() {
                             popUpTo("userSelectionScreen") { inclusive = false }
                         }
                     },
-                    onHomeClick = { navController.navigate("principal_screen") },
-                    onChatClick = { navController.navigate("userSelectionScreen") },
-                    onProfile = { navController.navigate("profileUser") }
+                    onHomeClick = { navigateToScreen("principal_screen") },
+                    onChatClick = { navigateToScreen("userSelectionScreen") },
+                    onProfile = { navigateToScreen("profileUser") },
+                    onMatchesClick = { navigateToScreen("matches_screen") }
                 )
             }
 
@@ -149,17 +165,9 @@ class MainActivity : ComponentActivity() {
                 if (selectedUser != null) {
                     ChatScreen(viewModel = chatViewModel, user = selectedUser)
                 } else {
-                    navController.navigate("userSelectionScreen") {
-                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                    }
+                    navigateToScreen("userSelectionScreen")
                 }
             }
         }
-    }
-
-    @Preview(showBackground = true)
-    @Composable
-    fun MainActivityPreview() {
-        App()
     }
 }
