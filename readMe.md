@@ -1,6 +1,8 @@
 # Cinder
 Este projeto visa simular a Interface de um aplicativo de relacionamentos.
 
+![Logo](/demo/logo.png)
+
 ## Objetivo
 O intuito deste projeto é a utilização de Componentes do **Material design**: [clique aqui](https://developer.android.com/develop/ui/compose/components?hl=pt-br)
 
@@ -12,7 +14,7 @@ O intuito deste projeto é a utilização de Componentes do **Material design**:
 
 ## Demonstração
  
-![Demonstração](/demo/demo.gif)
+![Demonstração](/demo/demo2.gif)
 
 ## Considerações
 - Todas as imagens foram geradas através do [Leonardo AI](https://app.leonardo.ai)
