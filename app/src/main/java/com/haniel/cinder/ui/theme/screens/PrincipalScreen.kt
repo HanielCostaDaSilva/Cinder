@@ -48,12 +48,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.widget.Toast
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.rememberAsyncImagePainter
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
@@ -155,9 +154,12 @@ fun CinderPrincipalScreen(
         userDao.find { loadedUsers ->
             userDao.findByName(usuarioLogado.name) { user ->
                 if (user != null) {
-                    usersWithInterests = loadedUsers.map { otherUser ->
-                        otherUser to user.interests.intersect(otherUser.interests.toSet()).size
-                    }.sortedByDescending { it.second }
+                    usersWithInterests = loadedUsers
+                        .filter { it.name != usuarioLogado.name }
+                        .map { otherUser ->
+                            otherUser to user.interests.intersect(otherUser.interests.toSet()).size
+                        }
+                        .sortedByDescending { it.second }
 
                     if (usersWithInterests.isNotEmpty()) {
                         personDisplay = usersWithInterests[indexPerson].first
@@ -173,6 +175,7 @@ fun CinderPrincipalScreen(
         matchMessage?.let { message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             matchMessage = null
+
         }
     }
 
@@ -240,22 +243,24 @@ fun CinderPrincipalScreen(
 
                                             matchMessage = when (result) {
                                                 -1 -> "Esse usuário já foi adicionado."
-                                                0 -> "Like enviado!"
+                                                0 -> "Será que vai rolar?"
                                                 1 -> {
                                                     "Rolou um Match!"
                                                     onChatClick()
                                                     null
                                                 }
+
                                                 else -> null
                                             }
                                         },
                                     ) {
-                                        Text("Like")
+                                        Text("Match")
                                     }
                                     Button(
                                         modifier = Modifier.width(150.dp),
                                         onClick = {
-                                            indexPerson = (indexPerson + 1) % usersWithInterests.size
+                                            indexPerson =
+                                                (indexPerson + 1) % usersWithInterests.size
                                             personDisplay = usersWithInterests[indexPerson].first
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
@@ -274,4 +279,14 @@ fun CinderPrincipalScreen(
             }
         }
     )
+}
+@Preview(showBackground = true)
+@Composable
+fun CinderPrincipalScreenPreview() {
+    CinderPrincipalScreen(
+        onProfile = { /*TODO*/ },
+        onChatClick = { /*TODO*/ },
+        onHomeClick = { /*TODO*/ }) {
+
+    }
 }
