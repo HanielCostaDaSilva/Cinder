@@ -33,13 +33,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import com.google.common.io.Files.append
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
@@ -161,10 +165,21 @@ fun ProfileUserScreen(
                                         fontWeight = FontWeight.Bold
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
-                                    Text(" ${it.age} anos", fontSize = 18.sp,fontWeight = FontWeight.Bold)
+                                    Text("Idade: ${it.age} anos", fontSize = 18.sp,fontWeight = FontWeight.Bold)
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
                                         " ${it.biograpy}",
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Light
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = buildAnnotatedString {
+                                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                                append("Interesses: ")
+                                            }
+                                            append(it.interests.joinToString(", "))
+                                        },
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Light
                                     )

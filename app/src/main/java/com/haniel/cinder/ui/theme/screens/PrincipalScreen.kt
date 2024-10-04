@@ -53,7 +53,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.widget.Toast
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import coil.compose.rememberAsyncImagePainter
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
@@ -66,7 +68,6 @@ fun PersonCard(user: User) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(320.dp)
             .padding(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -92,7 +93,25 @@ fun PersonCard(user: User) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(" ${user.name}", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-            Text(" ${user.age} anos", fontSize = 20.sp)
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Idade: ")
+                    }
+                    append("${user.age} anos")
+                },
+                fontSize = 20.sp
+            )
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Interesses: ")
+                    }
+                    append(user.interests.joinToString(", "))
+                },
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Light
+            )
         }
 
     }

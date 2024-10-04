@@ -20,10 +20,10 @@ import androidx.navigation.compose.rememberNavController
 
 // Lista de interesses predefinidos agrupados por categorias
 val predefinedInterests = listOf(
-    "Sports" to listOf("Soccer", "Basketball", "Volleyball", "Tennis", "Swimming", "Martial Arts", "Running"),
-    "Movies" to listOf("Action", "Comedy", "Drama", "Horror", "Science Fiction", "Romance"),
-    "Music" to listOf("Rock", "Pop", "Country", "Electronic", "Classical"),
-    "Politics" to listOf("Liberalism", "Conservatism", "Socialism", "Communism", "Indifferent")
+    "Esportes" to listOf("Futebol", "Basquete", "Vôlei", "Tênis", "Natação", "Artes Marciais", "Corrida"),
+    "Filmes" to listOf("Ação", "Comédia", "Drama", "Terror", "Ficção Científica", "Romance"),
+    "Música" to listOf("Rock", "Pop", "Country", "Eletrônica", "Clássica"),
+    "Política" to listOf("Liberalismo", "Conservadorismo", "Socialismo", "Comunismo", "Indiferente")
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,7 +125,7 @@ fun InterestsScreen(
                                 .fillMaxWidth()
                                 .padding(bottom = 16.dp)
                         ) {
-                            Text("Save interests")
+                            Text("Salvar Interesses")
                         }
                     }
                 }
