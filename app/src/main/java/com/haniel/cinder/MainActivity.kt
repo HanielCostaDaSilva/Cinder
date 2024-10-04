@@ -1,5 +1,6 @@
 package com.haniel.cinder
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,6 +18,7 @@ import com.haniel.cinder.model.User
 import com.haniel.cinder.ui.theme.screens.*
 import com.haniel.cinder.viewmodel.ChatViewModel
 import com.haniel.cinder.viewmodel.UserViewModel
+import com.haniel.cinder.ui.theme.screens.MatchesScreen
 
 class MainActivity : ComponentActivity() {
     private val modifierScreen: Modifier = Modifier
@@ -114,7 +116,7 @@ class MainActivity : ComponentActivity() {
                     navigateToLogin = { navigateToScreen("auth_screen") },
                     navigateToHome = { navigateToScreen("principal_screen") },
                     onChatClick = { navigateToScreen("userSelectionScreen") },
-                    onProfileClick = {} ,
+                    onProfileClick = {},
                     onMatchesClick = { navigateToScreen("matches_screen") }
                 )
             }
@@ -122,14 +124,14 @@ class MainActivity : ComponentActivity() {
             composable("editionScreen") {
                 EditionScreen(
                     modifier = modifierScreen,
-                    onBack = {  navigateToScreen("profileUser") }
+                    onBack = { navigateToScreen("profileUser") }
                 )
             }
 
             composable("matches_screen") {
                 MatchesScreen(
                     currentUser = usuarioLogado,
-                    modifier = modifierScreen ,
+                    modifier = modifierScreen,
                     onHomeClick = { navigateToScreen("principal_screen") },
                     onChatClick = { navigateToScreen("userSelectionScreen") },
                     onProfile = { navigateToScreen("profileUser") },

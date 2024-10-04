@@ -6,6 +6,40 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,7 +51,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.widget.Toast
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
@@ -48,13 +86,34 @@ fun PersonCard(user: User) {
                 contentDescription = "${user.name} Image",
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(200.dp)
                     .padding(10.dp)
                     .clip(RoundedCornerShape(30.dp))
+                    .align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(" ${user.name}", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-            Text(" ${user.age} anos", fontSize = 20.sp)
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Idade: ")
+                    }
+                    append("${user.age} anos")
+                },
+                fontSize = 20.sp
+            )
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Interesses: ")
+                    }
+                    append(user.interests.joinToString(", "))
+                },
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Light
+            )
         }
+
     }
 }
 
@@ -115,9 +174,12 @@ fun CinderPrincipalScreen(
         userDao.find { loadedUsers ->
             userDao.findByName(usuarioLogado.name) { user ->
                 if (user != null) {
-                    usersWithInterests = loadedUsers.map { otherUser ->
-                        otherUser to user.interests.intersect(otherUser.interests.toSet()).size
-                    }.sortedByDescending { it.second }
+                    usersWithInterests = loadedUsers
+                        .filter { it.name != usuarioLogado.name }
+                        .map { otherUser ->
+                            otherUser to user.interests.intersect(otherUser.interests.toSet()).size
+                        }
+                        .sortedByDescending { it.second }
 
                     if (usersWithInterests.isNotEmpty()) {
                         personDisplay = usersWithInterests[indexPerson].first
@@ -200,22 +262,24 @@ fun CinderPrincipalScreen(
 
                                             matchMessage = when (result) {
                                                 -1 -> "Esse usuário já foi adicionado."
-                                                0 -> "Like enviado!"
+                                                0 -> "Será que vai rolar?"
                                                 1 -> {
                                                     "Rolou um Match!"
                                                     onChatClick()
                                                     null
                                                 }
+
                                                 else -> null
                                             }
                                         },
                                     ) {
-                                        Text("Like")
+                                        Text("Match")
                                     }
                                     Button(
                                         modifier = Modifier.width(150.dp),
                                         onClick = {
-                                            indexPerson = (indexPerson + 1) % usersWithInterests.size
+                                            indexPerson =
+                                                (indexPerson + 1) % usersWithInterests.size
                                             personDisplay = usersWithInterests[indexPerson].first
                                         },
                                         colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
@@ -234,4 +298,14 @@ fun CinderPrincipalScreen(
             }
         }
     )
+}
+@Preview(showBackground = true)
+@Composable
+fun CinderPrincipalScreenPreview() {
+    CinderPrincipalScreen(
+        onProfile = { /*TODO*/ },
+        onChatClick = { /*TODO*/ },
+        onHomeClick = { /*TODO*/ }) {
+
+    }
 }

@@ -29,30 +29,26 @@ import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.userService
 import kotlinx.coroutines.launch
-
-
-
-
 @Composable
-fun MatchItem(id:String) {
+fun MatchSentItem(id: String, onCancelRequest: () -> Unit) {
     var name by remember { mutableStateOf(id) }
 
     LaunchedEffect(id) {
         userService.getById(id)?.let {
-            name = it.name }
+            name = it.name
+        }
     }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable {
-
-            },
+            .clickable {},
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painterResource(id = R.drawable.cinder),
-            contentDescription = "Imagem ${id}",
+            contentDescription = "Imagem de $name",
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
@@ -61,28 +57,90 @@ fun MatchItem(id:String) {
 
         Spacer(modifier = Modifier.width(12.dp))
 
-
         Text(
-            text = id,
+            text = name,
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = MaterialTheme.colorScheme.onSurface
             )
         )
+
+        Spacer(modifier = Modifier.weight(1f)) // Para empurrar o botão para a direita
+
+        Button(
+            onClick = onCancelRequest,
+            modifier = Modifier.padding(4.dp)
+        ) {
+            Text("Cancelar Solicitação")
+        }
+    }
+}
+
+@Composable
+fun MatchReceivedItem(id: String, onAcceptRequest: () -> Unit, onRejectRequest: () -> Unit) {
+    var name by remember { mutableStateOf(id) }
+
+    LaunchedEffect(id) {
+        userService.getById(id)?.let {
+            name = it.name
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .clickable {},
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.cinder),
+            contentDescription = "Imagem de $name",
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Text(
+            text = name,
+            style = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        )
+
+        Spacer(modifier = Modifier.weight(1f)) // Para empurrar os botões para a direita
+
+        Button(
+            onClick = onAcceptRequest,
+            modifier = Modifier.padding(4.dp)
+        ) {
+            Text("Aceitar")
+        }
+
+        Button(
+            onClick = onRejectRequest,
+            modifier = Modifier.padding(4.dp)
+        ) {
+            Text("Rejeitar")
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MatchesScreen(currentUser: User,
-                  modifier: Modifier = Modifier,
-                  onProfile: () -> Unit,
-                  onChatClick: () -> Unit,
-                  onHomeClick: () -> Unit,
-                  onMatchesClick: () -> Unit
-)
-{
-
-    val coroutineScope = rememberCoroutineScope()
+fun MatchesScreen(
+    currentUser: User,
+    modifier: Modifier = Modifier,
+    onProfile: () -> Unit,
+    onChatClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onMatchesClick: () -> Unit,
+    onCancelMatchRequest: (String) -> Unit = {},
+    onAcceptMatchRequest: (String) -> Unit = {},
+    onRejectMatchRequest: (String) -> Unit = {}
+) {
 
     Scaffold(
         topBar = {
@@ -92,12 +150,9 @@ fun MatchesScreen(currentUser: User,
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("Matches", color = Color.White, fontFamily =  FontFamily.Serif)
+                        Text("Matches", color = Color.White, fontFamily = FontFamily.Serif)
                     }
-                },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = Color(0xFF5A028F)
-                )
+                }
             )
         },
         bottomBar = {
@@ -113,11 +168,11 @@ fun MatchesScreen(currentUser: User,
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(paddingValues) // Usando paddingValues para garantir que o conteúdo não fique por baixo dos app bars
+                .padding(paddingValues)
                 .padding(16.dp)
                 .background(MaterialTheme.colorScheme.surface)
         ) {
-            // Conteúdo da tela
+            // Matches Recebidos
             Text(
                 text = "Matches Recebidos",
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -129,13 +184,18 @@ fun MatchesScreen(currentUser: User,
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(currentUser.matchSendList) { id ->
-                    MatchItem(id = id)
+                items(currentUser.matchReceivedList) { id ->
+                    MatchReceivedItem(
+                        id = id,
+                        onAcceptRequest = { onAcceptMatchRequest(id) },
+                        onRejectRequest = { onRejectMatchRequest(id) }
+                    )
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Matches Enviados
             Text(
                 text = "Matches Enviados",
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -148,31 +208,12 @@ fun MatchesScreen(currentUser: User,
 
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 items(currentUser.matchSendList) { id ->
-                    MatchItem(id = id)
+                    MatchSentItem(
+                        id = id,
+                        onCancelRequest = { onCancelMatchRequest(id) }
+                    )
                 }
             }
         }
     }
-
-
-
-suspend fun getUsersMatches(ids:List<String> ): List<User> {
-    val usersGet= mutableListOf<User>();
-    for (id in ids){
-        userService.getById(id)?.let { usersGet.add(it) }
-    }
-    println(usersGet.toString())
-    return usersGet
-}
-
-//@Preview(showBackground = true)
-//@Composable
-//fun MatchesScreenPreview() {
-//    val mockUser = User(
-//        matchReceivedList = mutableListOf("1", "2", "3"),
-//        matchSendList = mutableListOf("4", "5", "6")
-//    )
-//
-//    MatchesScreen(currentUser = mockUser)
-//}
 }

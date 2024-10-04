@@ -1,5 +1,6 @@
 package com.haniel.cinder.ui.theme.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,10 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,9 +34,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
 import com.haniel.cinder.usuarioLogado
@@ -44,6 +53,7 @@ fun EditionScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     var biograpy by remember { mutableStateOf("") }
     var isSaving by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf<String?>(null) }
+    var imageUrl by remember { mutableStateOf("") }
 
     val userDao = UserDAO()
     val globalLogin = usuarioLogado// A variável global que contém o login
@@ -55,6 +65,7 @@ fun EditionScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                 name = fetchedUser.name
                 age = fetchedUser.age.toString()
                 biograpy = fetchedUser.biograpy
+                imageUrl = fetchedUser.imageUrl
             }
             isLoading = false
         }
@@ -83,8 +94,26 @@ fun EditionScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(16.dp),
-                        verticalArrangement = Arrangement.Center
+                            verticalArrangement = Arrangement.Center
                     ) {
+                        // Exibir imagem atual do usuário, se disponível
+                        val painter: Painter = rememberImagePainter(imageUrl)
+                        Image(
+                            painter = painter,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(128.dp)
+                                .align(Alignment.CenterHorizontally))
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        TextField(
+                            value = imageUrl,
+                            onValueChange = { imageUrl = it },
+                            label = { Text("URL da Imagem") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .size(128.dp)
+                        )
                         TextField(
                             value = name,
                             onValueChange = { name = it },
@@ -115,7 +144,7 @@ fun EditionScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                                 if (name.isNotBlank() && ageInt != null) {
                                     isSaving = true
                                     val updatedUser =
-                                        user?.copy(name = name, age = ageInt, biograpy = biograpy)
+                                        user?.copy(name = name, age = ageInt, biograpy = biograpy, imageUrl = imageUrl)
                                     updatedUser?.let {
                                         userDao.updateUser(it) {
                                             isSaving = false
@@ -132,6 +161,12 @@ fun EditionScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             Text("Salvar")
                         }
                         Spacer(modifier = Modifier.height(16.dp))
+                        Button(
+                            onClick = onBack,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Voltar")
+                        }
                         message?.let {
                             Text(
                                 text = it,

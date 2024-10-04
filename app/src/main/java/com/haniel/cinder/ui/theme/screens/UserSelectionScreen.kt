@@ -84,9 +84,9 @@ fun UserSelectionScreen(
                         Text("Chat", color = Color.White, fontFamily =  FontFamily.Serif)
                     }
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
+/*                colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = Color(0xFF5A028F)
-                )
+                )*/
             )
         },
         bottomBar = {
