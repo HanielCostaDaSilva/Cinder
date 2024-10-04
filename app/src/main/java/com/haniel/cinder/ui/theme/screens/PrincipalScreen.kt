@@ -56,7 +56,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.rememberAsyncImagePainter
 import com.haniel.cinder.R
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
@@ -83,7 +82,7 @@ fun PersonCard(user: User) {
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = rememberAsyncImagePainter(user.imageUrl),
+                painter = painterResource(id = if (user.imageID != 0) user.imageID else R.drawable.cinder),
                 contentDescription = "${user.name} Image",
                 modifier = Modifier
                     .fillMaxWidth()
