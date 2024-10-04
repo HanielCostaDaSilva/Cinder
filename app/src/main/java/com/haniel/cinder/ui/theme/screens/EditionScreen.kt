@@ -9,14 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,8 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.haniel.cinder.model.User
 import com.haniel.cinder.repository.UserDAO
-
-import com.haniel.cinder.usuarioLogadoCinder
+import com.haniel.cinder.usuarioLogado
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,10 +46,10 @@ fun EditionScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
     var message by remember { mutableStateOf<String?>(null) }
 
     val userDao = UserDAO()
-    val globalLogin = usuarioLogadoCinder
+    val globalLogin = usuarioLogado// A variável global que contém o login
 
     LaunchedEffect(globalLogin) {
-        userDao.findByName(globalLogin) { fetchedUser ->
+        userDao.findByName(globalLogin.name) { fetchedUser ->
             user = fetchedUser
             if (fetchedUser != null) {
                 name = fetchedUser.name
@@ -138,12 +132,6 @@ fun EditionScreen(modifier: Modifier = Modifier, onBack: () -> Unit) {
                             Text("Salvar")
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = onBack,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Voltar")
-                        }
                         message?.let {
                             Text(
                                 text = it,
